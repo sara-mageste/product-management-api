@@ -25,6 +25,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    // Salva roles como CSV por simplicidade: "ROLE_USER,ROLE_ADMIN"
+    // Saves roles as CSV for simplicity: "ROLE_USER,ROLE_ADMIN"
     private String roles;
 }

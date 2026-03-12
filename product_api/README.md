@@ -1,66 +1,65 @@
 # Product Management API
 
-API REST desenvolvida em Java com Spring Boot para gestão de produtos, aplicando boas práticas de arquitetura, validação de dados, tratamento global de exceções e organização em camadas.
+REST API developed in Java with Spring Boot for product management, applying best practices in architecture, data validation, global exception handling, and layered project organization.
+The project simulates a real backend used in corporate applications such as e-commerce systems, inventory management, or product catalogs, and was built with a focus on code quality, maintainability, and scalability.
 
-O projeto simula um backend real de aplicação corporativa, como os utilizados em sistemas de e-commerce, controle de estoque ou catálogos de produtos, e foi desenvolvido com foco em qualidade de código, manutenibilidade e escalabilidade.
+## 🔍 Overview
 
-## 🔍 Visão Geral
+The application provides REST endpoints for complete product CRUD operations, including:
 
-A aplicação disponibiliza endpoints REST para operações completas de CRUD de produtos, incluindo:
+* Create
+* Read
+* Update
+* Delete
+* Pagination
+* Sorting
+* Search by name
+* Product image support via URL
 
-* Criação
-* Consulta
-* Atualização
-* Exclusão
-* Paginação
-* Ordenação
-* Busca por nome
-* Suporte a imagem de produto via URL
+The API was designed with a decoupled architecture, allowing easy integration with frontend applications.
+Additionally, the project already includes an initial structure prepared for authentication and security, enabling future evolution without structural refactoring.
 
-A API foi construída de forma desacoplada, permitindo fácil integração com aplicações frontend.
-Além disso, o projeto já possui estrutura preparada para autenticação e segurança, permitindo evolução futura sem refatorações estruturais.
+## 🚀 Features
 
-## 🚀 Funcionalidades
+* Full product CRUD operations
+* Dynamic pagination and sorting
+* Data validation using Bean Validation
+* Product search by name
+* Global exception handling
+* Standardized error responses
+* Clear separation of responsibilities by layer
 
-* CRUD completo de produtos
-* Paginação e ordenação dinâmicas
-* Validação de dados com Bean Validation
-* Busca de produtos por nome
-* Tratamento global de exceções
-* Respostas padronizadas de erro
-* Separação clara de responsabilidades por camada
+## 🧱 Project Architecture
 
-## 🧱 Arquitetura do Projeto
-
-O projeto segue arquitetura em camadas, garantindo separação de responsabilidades e fácil manutenção:
+The project follows a layered architecture, ensuring separation of responsibilities and easier maintenance:
 
 ``` 
 src/main/java/com/saraprojects/product_api
 │
-├── config        → Configurações (Spring Security)
+├── config        → Configuration (Spring Security)
 ├── controller    → REST Controllers
 ├── dto           → Data Transfer Objects
-├── exception     → Tratamento global de exceções
-├── model         → Entidades JPA
-├── repository    → Repositórios (Spring Data JPA)
-├── service       → Regras de negócio
+├── exception     → Global exception handling
+├── model         → JPA entities
+├── repository    → Repositories (Spring Data JPA)
+├── service       → Business logic
 └── ProductApiApplication.java
 ``` 
-Essa organização garante:
+This organization ensures:
 
-* Baixo acoplamento
-* Alta coesão
-* Facilidade de manutenção
-* Facilidade de testes e evolução
+* Low coupling
+* High cohesion
+* Easier maintenance
+* Easier testing and project evolution
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
 * Java 21
 * Spring Boot
 * Spring Web
 * Spring Data JPA
 * Spring Validation
-* Spring Security (configuração inicial)
+* Spring Security (initial configuration)
 * Hibernate
 * Lombok
 * MySQL
@@ -68,49 +67,49 @@ Essa organização garante:
 
 ## 📌 Endpoints
 ```
-POST   /api/products        → Criar produto
-GET    /api/products        → Listar todos os produtos
-GET    /api/products/paged  → Listar produtos com paginação
-GET    /api/products/search → Buscar produtos por nome
-GET    /api/products/{id}   → Buscar produto por ID
-PUT    /api/products/{id}   → Atualizar produto
-DELETE /api/products/{id}   → Excluir produto
+POST   /api/products        → Create product
+GET    /api/products        → List all products
+GET    /api/products/paged  → List products with pagination
+GET    /api/products/search → Search products by name
+GET    /api/products/{id}   → Get product by ID
+PUT    /api/products/{id}   → Update product
+DELETE /api/products/{id}   → Delete product
 ```
 
-## ✅ Validação de Dados
+## ✅ Data Validation
 
-A API utiliza Bean Validation para garantir a integridade dos dados recebidos:
+The API uses Bean Validation to ensure the integrity of incoming data:
 
-* Nome obrigatório
-* Preço obrigatório e maior que zero
-* Quantidade obrigatória e maior ou igual a zero
-* Validação de formato de URL para imagem do produto
+* Name is required
+* Price is required and must be greater than zero
+* Quantity is required and must be greater than or equal to zero
+* URL format validation for product images
 
-Requisições inválidas retornam mensagens claras e estruturadas, facilitando o consumo da API por aplicações frontend.
+Invalid requests return clear and structured error messages, making it easier for frontend applications to consume the API.
 
-## ⚠️ Tratamento de Exceções
+## ⚠️ Exception Handling
 
-O projeto utiliza um tratamento global de exceções (GlobalExceptionHandler), garantindo:
+The project uses a global exception handling mechanism (GlobalExceptionHandler), ensuring:
 
-* Padronização das respostas de erro
-* Mensagens claras para erros de validação
-* Uso correto de códigos HTTP
+* Standardized error responses
+* Clear validation error messages
+* Proper use of HTTP status codes
 
-## 🔐 Segurança
+## 🔐 Security
 
-A aplicação utiliza Spring Security com configuração inicial ativa.
+The application uses Spring Security with an initial configuration.
 
-No estado atual:
-* Todos os endpoints estão liberados (`permitAll`)
-* CSRF desativado (API stateless)
-* Estrutura preparada para autenticação futura
+Current state:
+* All endpoints are allowed (permitAll)
+* CSRF disabled (stateless API)
+* Structure prepared for future authentication
 
-A arquitetura permite evolução para autenticação baseada em JWT sem necessidade de refatorações estruturais.
+The architecture allows easy evolution to JWT-based authentication without structural refactoring.
 
-## 🔒 Configurações Sensíveis
+## 🔒 Sensitive Configuration
 
-Nenhuma credencial sensível é versionada no repositório.
-As configurações são realizadas via variáveis de ambiente:
+No sensitive credentials are stored in the repository.
+Configuration is handled through environment variables:
 ```
 DB_URL
 DB_USER
@@ -120,40 +119,40 @@ JWT_EXPIRATION
 JWT_REFRESH_EXPIRATION
 ```
 
-Arquivos sensíveis são ignorados por meio do .gitignore.
+Sensitive files are ignored using .gitignore.
 
-## ▶️ Como Executar o Projeto
+## ▶️ Running the Project
 
-1. Clone o repositório
-2. Configure as variáveis de ambiente
-3. Crie um banco MySQL
-4. Execute a aplicação:
+1. Clone the repository
+2. Configure the environment variables
+3. Create a MySQL database
+4. Run the application:
 ```
 mvn spring-boot:run
 ```
-A API estará disponível em:
+The API will be available at:
 ```
 http://localhost:8080
 ```
 
-## 📈 Próximos Passos (Evolução)
+## 📈 Next Steps (Future Improvements)
 
-🔐 Implementar autenticação e autorização com Spring Security e JWT
+🔐 Implement authentication and authorization using Spring Security + JWT
 
-🧪 Criar testes unitários e de integração
+🧪 Add unit and integration tests
 
-📄 Documentar API com Swagger/OpenAPI
+📄 Document the API using Swagger/OpenAPI
 
-🎨 Desenvolver frontend em Angular para consumo da API (Em desenvolvimento)
+🎨 Develop a frontend in Angular to consume the API (in progress)
 
 
-# 👩‍💻 Autora
+# 👩‍💻 Author
 
 **Sara Mageste**
 
-Desenvolvedora de Software
+Software Developer
 
 Java • Spring Boot • APIs REST • Lombok
 
-Projeto desenvolvido para estudo e portfólio profissional.
+Project developed for study and professional portfolio.
 

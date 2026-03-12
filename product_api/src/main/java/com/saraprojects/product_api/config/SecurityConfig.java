@@ -11,9 +11,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // desativa CSRF (para facilitar testes no Postman)
+                .csrf(csrf -> csrf.disable()) // disables CSRF (to make testing in Postman easier)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // libera acesso a todos os endpoints temporariamente
+                        .anyRequest().permitAll() // temporarily grants access to all endpoints
                 );
 
         return http.build();

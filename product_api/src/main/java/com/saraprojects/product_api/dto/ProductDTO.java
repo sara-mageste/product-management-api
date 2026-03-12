@@ -42,7 +42,7 @@ public class ProductDTO {
     )
     private String imageUrl;
 
-    // 🔁 Construtor que converte Entity → DTO
+    // Constructor that converts Entity → DTO
     public ProductDTO(Product product) {
         this.id = product.getId();
         this.name = product.getName();
@@ -54,7 +54,7 @@ public class ProductDTO {
         this.imageUrl = product.getImageUrl();
     }
 
-    // 🔁 Metodo que converte DTO → Entity
+    // Method that converts DTO → Entity
     public Product toEntity() {
         return Product.builder()
                 .id(this.id)

@@ -19,7 +19,7 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    // Paginação
+    // Pagination
     public Map<String, Object> getPagedResponse(int page, int size, String sortBy) {
         String[] sortParams = sortBy.split(",");
         String sortField = sortParams[0];
@@ -49,7 +49,7 @@ public class ProductService {
         return response;
     }
 
-    // Buscar produtos por nome (com paginação e ordenação)
+    // Search products by name (with pagination and sorting)
     public Map<String, Object> searchProducts(String name, int page, int size, String sortBy) {
         String[] sortParams = sortBy.split(",");
         String sortField = sortParams[0];
@@ -79,21 +79,21 @@ public class ProductService {
         return response;
     }
 
-    // Retornar todos os produtos (sem paginação)
+    // Return all products (without pagination)
     public List<ProductDTO> getAllProducts() {
         return repository.findAll().stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
     }
 
-    // Buscar produto por ID
+    // Find product by ID
     public ProductDTO getProductById(Long id) {
         Product product = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
         return new ProductDTO(product);
     }
 
-    // Filtrar produtos
+    // Filter products
     public Map<String, Object> getProductsWithFilters(
             ProductCategory category,
             ProductStatus status,
@@ -135,17 +135,17 @@ public class ProductService {
         return response;
     }
 
-    // Criar novo produto
+    // Create new product
     public ProductDTO createProduct(ProductDTO dto) {
         Product product = dto.toEntity();
         Product saved = repository.save(product);
         return new ProductDTO(saved);
     }
 
-    // Atualizar produto existente
+    // Update existing product
     public ProductDTO updateProduct(Long id, ProductDTO dto) {
         Product existing = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado com ID: " + id));
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
 
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
@@ -159,10 +159,10 @@ public class ProductService {
         return new ProductDTO(updated);
     }
 
-    // Excluir produto
+    // Delete product
     public void deleteProduct(Long id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Produto não encontrado com ID: " + id);
+            throw new RuntimeException("Product not found with ID: " + id);
         }
         repository.deleteById(id);
     }

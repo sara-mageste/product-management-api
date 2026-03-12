@@ -51,13 +51,13 @@ public class ProductController {
         return ResponseEntity.ok(service.searchProducts(name, page, size, sortBy));
     }
 
-    // Listar todos sem paginação
+    // List all without pagination
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         return ResponseEntity.ok(service.getAllProducts());
     }
 
-    // Listar todos com paginação
+    // List all with pagination
     @GetMapping("/paged")
     public ResponseEntity<Map<String, Object>> getAllProductsPaged(
             @RequestParam(defaultValue = "0") int page,
