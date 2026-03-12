@@ -1,93 +1,94 @@
 # Product Management Frontend
 
-Aplicação frontend desenvolvida em **Angular** para consumo da **Product Management API**.
+Frontend application developed with **Angular** to consume the **Product Management API**.
 
-Este projeto simula a interface de um sistema real de gestão de produtos, como os utilizados em painéis administrativos de e-commerce, controle de estoque ou catálogos internos.
+This project simulates the interface of a real-world product management system, similar to those used in **e-commerce admin panels, inventory control systems, or internal product catalogs**.
 
-O foco do frontend está em:
-* Organização de código
-* Boas práticas do Angular moderno
-* Comunicação eficiente com API REST
-* Experiência do usuário (UX)
-* Escalabilidade e manutenção
-
-
-## 🔍 Visão Geral
-
-A aplicação permite gerenciar produtos através de uma interface web, consumindo dados do backend via HTTP.
-
-Funcionalidades disponíveis atualmente:
-* Listagem de produtos
-* Busca por nome
-* Paginação
-* Ordenação
-* Consumo de imagens via URL
-* Estados de loading e erro
-* Arquitetura modular e organizada por features
-
-O frontend foi desenvolvido de forma desacoplada do backend, permitindo fácil evolução e manutenção.
+The main focus of the frontend is:
+* Code organization
+* Modern Angular best practices
+* Efficient communication with REST APIs
+* User experience (UX)
+* Scalability and maintainability
 
 
-## 🚀 Funcionalidades
+## 🔍 Overview
 
-* Listagem de produtos
-* Busca de produtos por nome
-* Paginação dinâmica
-* Ordenação
-* Consumo de API REST
-* Tratamento de estados de loading
-* Tratamento de erros de requisição
-* Estrutura preparada para autenticação futura
+The application allows users to manage products through a web interface by consuming data from the backend via HTTP.
+
+Current features include:
+* Product listing
+* Product search by name
+* Pagination
+* Sorting
+* Image loading via URL
+* Loading and error states
+* Modular architecture organized by features
+
+The frontend was designed to be decoupled from the backend, allowing easier evolution and maintenance.
 
 
-## 🧱 Arquitetura do Projeto
+## 🚀 Features
 
-O projeto segue uma organização baseada em **features**, prática recomendada para aplicações Angular escaláveis:
+* Product listing
+* Search products by name
+* Dynamic pagination
+* Sorting
+* REST API consumption
+* Loading state handling
+* Request error handling
+* Structure prepared for future authentication
+
+
+## 🧱 Project Architecture
+
+The project follows a feature-based architecture, a recommended practice for scalable Angular applications.
 
 ```
 src/app
 │
 ├── core
-│ ├── services → Serviços globais (API, interceptors futuramente)
-│ └── models → Interfaces e modelos
+│ ├── services → Global services (API, future interceptors)
+│ └── models → Interfaces and data models
 │
 ├── features
 │ └── products
-│ ├── components → Componentes de produtos
-│ ├── pages → Páginas (listagem, formulários)
-│ ├── service → Comunicação com API de produtos
-│ └── models → Modelos específicos
+│ ├── components → Product components
+│ ├── pages → Pages (lists, forms)
+│ ├── service → Communication with the products API
+│ └── models → Feature-specific models
 │
 ├── shared
-│ ├── components → Componentes reutilizáveis
-│ └── styles → Estilos compartilhados
+│ ├── components → Reusable components
+│ └── styles → Shared styles
 │
 └── app.component.ts
 
 ```
 
 
-Essa abordagem garante:
-* Separação clara de responsabilidades
-* Facilidade de evolução
-* Código mais legível e testável
+This approach ensures:
+* Clear separation of responsibilities
+* Easier scalability and evolution
+* More readable and testable code
 
 
-## 🔗 Integração com o Backend
+## 🔗 Backend Integration
 
-Este frontend consome a **Product Management API**, desenvolvida em Java com Spring Boot.
+This frontend consumes the Product Management API, developed in Java with Spring Boot.
 
-Endpoints utilizados incluem:
-* Listagem de produtos
-* Busca por nome
-* Paginação e ordenação
+Endpoints used include:
+* Product listing
+* Search by name
+* Pagination and sorting
 
-Backend:
+Backend base URL:
+
 ```
 http://localhost:8080/api/products
 ```
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Technologies Used
 
 - Angular 21
 - TypeScript
@@ -100,53 +101,53 @@ http://localhost:8080/api/products
 - Angular CLI
 
 
-## ▶️ Como Executar o Projeto
+## ▶️ Running the Project
 
-### Pré-requisitos
-* Node.js (versão compatível com Angular 21)
+### Prerequisites
+* Node.js (version compatible with Angular 21)
 * Angular CLI
 
-### Passos
+### Steps
 
-1. Clone o repositório
-2. Acesse a pasta do frontend:
+1. Clone the repository
+2. Navigate to the frontend folder:
 ```bash
 cd product_front
 ```
-3. Instale as dependências:
+3. Install dependencies:
 ```
 npm install
 ```
 
-4. Execute o projeto:
+4. Run the project:
 ```
 ng serve
 ```
 
-A aplicação estará disponível em:
+The application will be available at:
 ```
 http://localhost:4200
 ```
-⚠️ Certifique-se de que o backend esteja em execução para o correto funcionamento da aplicação.
+⚠️ Make sure the backend is running for the application to work properly.
 
-## 📈 Próximos Passos (Evolução)
+## 📈 Next Steps (Future Improvements)
 
-🔐 Implementar autenticação e autorização no frontend
+🔐 Implement authentication and authorization on the frontend
 
-📝 Criar formulários de criação e edição de produtos
+📝 Create product creation and editing forms
 
-🧪 Implementar testes unitários
+🧪 Expand unit test coverage
 
-🎨 Melhorar UX/UI e responsividade
+🎨 Improve UX/UI and responsiveness
 
-📦 Implementar interceptors para tratamento global de erros e tokens
+📦 Implement interceptors for global error handling and authentication tokens
 
-## 👩‍💻 Autora
+## 👩‍💻 Author
 
 **Sara Mageste**
 
-Desenvolvedora de Software
+Software Developer
 
 Java • Spring Boot • Angular • APIs REST
 
-Projeto desenvolvido para estudo e portfólio profissional.
+This project was developed for study purposes and as part of a professional portfolio.

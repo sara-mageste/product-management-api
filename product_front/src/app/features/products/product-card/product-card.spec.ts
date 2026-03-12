@@ -15,8 +15,8 @@ describe('ProductCardComponent', () => {
 
     component.product = {
       id: 1,
-      name: 'Produto Teste',
-      description: 'Descrição teste',
+      name: 'Test Product',
+      description: 'Test Description',
       price: 10,
       quantity: 5,
       imageUrl: 'https://via.placeholder.com/150'
@@ -25,7 +25,22 @@ describe('ProductCardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
+  });
+
+  it ('should display the product name', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect (compiled.textContent).toContain('Test Description');
+  })
+
+  it('should display the product description', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect (compiled.textContent).toContain('Test Description');    
+  });
+
+  it('should display the product price', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect (compiled.textContent).toContain('10');    
   });
 });

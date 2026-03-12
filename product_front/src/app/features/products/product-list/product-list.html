@@ -1,6 +1,6 @@
 <div class="products-page">
 
-  <!-- LATERAL ESQUERDA -->
+  <!-- LEFT BACK -->
   <aside class="sidebar left">
 
     <div class="sidebar-top">
@@ -12,7 +12,7 @@
         <input
           #searchInput
           type="text"
-          placeholder="Buscar produto..."
+          placeholder="Search products..."
           [(ngModel)]="searchTerm"
           (input)="search()"
           (blur)="closeSearch()"
@@ -32,11 +32,11 @@
 
   </aside>
 
-  <!-- CONTEÚDO CENTRAL -->
+  <!-- MAIN CONTENT -->
   <main class="products-content">
 
     <ng-container *ngIf="loading; else loadedState">
-      <p>Carregando produtos...</p>
+      <p>Loading products...</p>
     </ng-container>
 
     <ng-template #loadedState>
@@ -50,12 +50,12 @@
     </ng-template>
 
     <ng-template #emptyState>
-      <p>Nenhum produto encontrado.</p>
+      <p>No product found.</p>
     </ng-template>
 
   </main>
 
-  <!-- LATERAL DIREITA -->
+  <!-- RIGHT BACK -->
   <aside class="sidebar right">
 
     <div class="sidebar-top">

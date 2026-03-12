@@ -1,4 +1,4 @@
-/* Página */
+/* Page*/
 .products-page {
   background-color: #c5c3aa;
   min-height: 100vh;
@@ -7,12 +7,12 @@
   position: relative;
 }
 
-/* Área central (produtos) */
+/* Central area (products) */
 .products-content {
   box-sizing: border-box;
 }
 
-/* Grid de produtos */
+/* Product grid */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -40,7 +40,7 @@
   right: 32px;
 }
 
-/* Grupos internos */
+/* Internal groups */
 .sidebar-top {
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@
   gap: 16px;
 }
 
-/* Botões */
+/* Buttons */
 .action-icon {
   width: 37px;
   height: 37px;
@@ -79,7 +79,7 @@
   padding: 0;
 }
 
-/* Ícones */
+/* Icons */
 .material-symbols-rounded {
   font-size: 30px;
   line-height: 1;
@@ -90,13 +90,13 @@
     'opsz' 24;
 }
 
-/* Mensagens */
+/* Messages */
 .products-content p {
   color: black;
   font-size: 14px;
 }
 
-/* Pesquisas */
+/* Research */
 .search-container {
   display: flex;
   align-items: center;

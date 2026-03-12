@@ -47,14 +47,14 @@ export class ProductListComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.errorMessage = 'Erro ao carregar produtos';
+        this.errorMessage = 'Error loading products';
         this.loading = false;
         this.cdr.detectChanges();
       }
     });
   }
 
-  /* Abre e fecha a busca */
+  /* Opens and closes the search */
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
   toggleSearch() : void{
@@ -80,7 +80,7 @@ export class ProductListComponent implements OnInit {
     this.loadProducts(0);
   }
 
-  /* Busca GLOBAL no back-end */
+  /* GLOBAL search on the back-end */
   search(): void {
     const term = this.searchTerm.trim();
 
@@ -99,7 +99,7 @@ export class ProductListComponent implements OnInit {
         this.cdr.detectChanges();
       },
       error: () => {
-        this.errorMessage = 'Erro ao buscar produtos';
+        this.errorMessage = 'Error loading products';
         this.loading = false;
         this.cdr.detectChanges();
       }

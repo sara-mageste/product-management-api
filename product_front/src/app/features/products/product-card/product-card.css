@@ -13,7 +13,7 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Efeito sutil de elevação */
+/* Subtle lifting effect */
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
