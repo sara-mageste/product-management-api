@@ -43,7 +43,7 @@
       <ng-container *ngIf="products.length > 0; else emptyState">
         <section class="products-grid">
           <app-product-card
-            *ngFor="let product of products" [product]="product">
+            *ngFor="let product of products; trackBy: trackById" [product]="product">
           </app-product-card>
         </section>
       </ng-container>

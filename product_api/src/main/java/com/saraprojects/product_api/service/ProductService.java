@@ -8,10 +8,10 @@ import com.saraprojects.product_api.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,25 +19,28 @@ public class ProductService {
 
     private final ProductRepository repository;
 
-    // Pagination
-    public Map<String, Object> getPagedResponse(int page, int size, String sortBy) {
-        String[] sortParams = sortBy.split(",");
-        String sortField = sortParams[0];
-        Sort.Direction sortDirection = Sort.Direction.ASC;
+    private Pageable buildPageable (int page, int size, String sortBy){
+        try{
+            String[] sortParams = sortBy.split(",");
+            String sortField = sortParams[0];
+            Sort.Direction sortDirection = Sort.Direction.ASC;
 
-        if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
-            sortDirection = Sort.Direction.DESC;
+            if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
+                sortDirection = Sort.Direction.DESC;
+            }
+
+            return PageRequest.of(page, size, Sort.by(sortDirection, sortField));
+
+        } catch (Exception e) {
+            return PageRequest.of(page, size, Sort.by("name").ascending());
         }
+    }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
-        Page<Product> pageProducts = repository.findAll(pageable);
-
-        List<ProductDTO> products = pageProducts
-                .getContent()
+    private Map<String, Object> buildResponse (Page<Product> pageProducts, String sortBy){
+        List<ProductDTO> products = pageProducts.getContent()
                 .stream()
                 .map(ProductDTO::new)
                 .toList();
-
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("products", products);
         response.put("currentPage", pageProducts.getNumber());
@@ -49,41 +52,33 @@ public class ProductService {
         return response;
     }
 
-    // Search products by name (with pagination and sorting)
-    public Map<String, Object> searchProducts(String name, int page, int size, String sortBy) {
-        String[] sortParams = sortBy.split(",");
-        String sortField = sortParams[0];
-        Sort.Direction sortDirection = Sort.Direction.ASC;
+    // Pagination
+    public Map<String, Object> getPagedResponse(int page, int size, String sortBy) {
+        Pageable pageable = buildPageable(page, size, sortBy);
+        Page<Product> pageProducts = repository.findAll(pageable);
+        return buildResponse(pageProducts, sortBy);
+    }
 
-        if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
-            sortDirection = Sort.Direction.DESC;
+    // Search products by name or code(with pagination and sorting)
+    public Map<String, Object> searchProducts(String term, int page, int size, String sortBy) {
+        Pageable pageable = buildPageable(page, size, sortBy);
+        Page<Product> pageProducts;
+
+        if(term.matches("\\d+")){
+            pageProducts = repository.findByCode(term, pageable);
+
+        } else{
+            pageProducts = repository.findByNameStartingWithIgnoreCase(term, pageable);
         }
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
-        Page<Product> pageProducts = repository.findByNameStartingWithIgnoreCase(name, pageable);
-
-        List<ProductDTO> products = pageProducts
-                .getContent()
-                .stream()
-                .map(ProductDTO::new)
-                .toList();
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("products", products);
-        response.put("currentPage", pageProducts.getNumber());
-        response.put("totalItems", pageProducts.getTotalElements());
-        response.put("totalPages", pageProducts.getTotalPages());
-        response.put("pageSize", pageProducts.getSize());
-        response.put("sortBy", sortBy);
-
-        return response;
+        return buildResponse(pageProducts, sortBy);
     }
 
     // Return all products (without pagination)
     public List<ProductDTO> getAllProducts() {
         return repository.findAll().stream()
                 .map(ProductDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     // Find product by ID
@@ -101,42 +96,28 @@ public class ProductService {
             int size,
             String sortBy
     ) {
-        String[] sortParams = sortBy.split(",");
-        String sortField = sortParams[0];
-        Sort.Direction sortDirection = Sort.Direction.ASC;
 
-        if (sortParams.length > 1 && sortParams[1].equalsIgnoreCase("desc")) {
-            sortDirection = Sort.Direction.DESC;
-        }
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by(sortDirection, sortField));
-
+        Pageable pageable = buildPageable(page, size, sortBy);
         Page<Product> pageProducts;
 
         if (category != null && status != null) {
             pageProducts = repository.findByCategoryAndStatus(category, status, pageable);
+        } else if (category != null) {
+            pageProducts = repository.findByCategory(category, pageable);
+        } else if (status != null) {
+            pageProducts = repository.findByStatus(status, pageable);
         } else {
             pageProducts = repository.findAll(pageable);
         }
 
-        List<ProductDTO> products = pageProducts.getContent()
-                .stream()
-                .map(ProductDTO::new)
-                .toList();
-
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("products", products);
-        response.put("currentPage", pageProducts.getNumber());
-        response.put("totalItems", pageProducts.getTotalElements());
-        response.put("totalPages", pageProducts.getTotalPages());
-        response.put("pageSize", pageProducts.getSize());
-        response.put("sortBy", sortBy);
-
-        return response;
+        return buildResponse(pageProducts, sortBy);
     }
 
     // Create new product
     public ProductDTO createProduct(ProductDTO dto) {
+        if (repository.existsByCode(dto.getCode())) {
+            throw new RuntimeException("Product code already exists");
+        }
         Product product = dto.toEntity();
         Product saved = repository.save(product);
         return new ProductDTO(saved);
@@ -147,6 +128,10 @@ public class ProductService {
         Product existing = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
 
+        if (!existing.getCode().equals(dto.getCode()) && repository.existsByCode(dto.getCode())) {
+            throw new RuntimeException("Product code already exists");
+        }
+
         existing.setName(dto.getName());
         existing.setDescription(dto.getDescription());
         existing.setPrice(dto.getPrice());
@@ -154,6 +139,7 @@ public class ProductService {
         existing.setCategory(dto.getCategory());
         existing.setStatus(dto.getStatus());
         existing.setImageUrl(dto.getImageUrl());
+        existing.setCode(dto.getCode());
 
         Product updated = repository.save(existing);
         return new ProductDTO(updated);

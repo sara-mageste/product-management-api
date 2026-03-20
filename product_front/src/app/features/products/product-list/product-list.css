@@ -101,15 +101,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
-  width: 37px;
-  overflow: hidden;
-  transition: width 0.3s ease;
 }
 
 .search-container input {
   height: 37px;
-  width: 160%;
+  width: 180px;
 
   padding: 0 12px;
   border: none;
@@ -118,16 +114,18 @@
   background-color: #eaeae1;
   border-radius: 999px;
 
+  transform: scaleX(0);
+  transform-origin: left;
   opacity: 0;
-  transition: opacity 0.2s ease;
-}
 
-.search-container.open{
-  width: 220px;
+  transition: transform 0.3s ease, opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .search-container.open input {
+  transform: scaleX(1);
   opacity: 1;
+  pointer-events: auto;
 }
 
 .search-container .action-icon {

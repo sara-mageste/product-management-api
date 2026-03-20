@@ -54,6 +54,10 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  trackById(index: number, product: any): number {
+    return product.id;
+  }
+  
   /* Opens and closes the search */
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
 
@@ -64,9 +68,7 @@ export class ProductListComponent implements OnInit {
       setTimeout(() => {
         this.searchInput?.nativeElement.focus();
       });
-    } else {
-      this.searchTerm = '';
-    }
+    } 
   }
 
   closeSearch(): void {
@@ -76,8 +78,6 @@ export class ProductListComponent implements OnInit {
     }
 
     this.isSearchOpen = false;
-    this.searchTerm = '';
-    this.loadProducts(0);
   }
 
   /* GLOBAL search on the back-end */

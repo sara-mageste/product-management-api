@@ -8,8 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    // Searches for products whose name **starts** with the given text, ignoring uppercase/lowercase
     Page<Product> findByNameStartingWithIgnoreCase(String name, Pageable pageable);
+    Page<Product> findByCode(String code, Pageable pageable);
+    boolean existsByCode(String code);
+    Page<Product> findByCategory(ProductCategory category, Pageable pageable);
+    Page<Product> findByStatus(ProductStatus status, Pageable pageable);
     Page<Product> findByCategoryAndStatus(
         ProductCategory category,
         ProductStatus status,

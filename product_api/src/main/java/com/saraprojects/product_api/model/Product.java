@@ -38,5 +38,8 @@ public class Product {
 
     @Column(name = "image_url")
     private String imageUrl;
+
+    @Column(unique = true, nullable = false, length = 20)
+    private String code;
 }
 

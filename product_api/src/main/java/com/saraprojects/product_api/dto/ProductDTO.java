@@ -1,11 +1,8 @@
 package com.saraprojects.product_api.dto;
 
 import com.saraprojects.product_api.model.Product;
+import jakarta.validation.constraints.*;
 import lombok.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import com.saraprojects.product_api.domain.enums.ProductCategory;
 import com.saraprojects.product_api.domain.enums.ProductStatus;
 
@@ -42,6 +39,10 @@ public class ProductDTO {
     )
     private String imageUrl;
 
+    @NotBlank
+    @Pattern(regexp = "\\d{8,20}", message = "Code must contain only numbers (8-20 digits)")
+    private String code;
+
     // Constructor that converts Entity → DTO
     public ProductDTO(Product product) {
         this.id = product.getId();
@@ -52,6 +53,7 @@ public class ProductDTO {
         this.category = product.getCategory();
         this.status = product.getStatus();
         this.imageUrl = product.getImageUrl();
+        this.code = product.getCode();
     }
 
     // Method that converts DTO → Entity
@@ -65,6 +67,7 @@ public class ProductDTO {
                 .category(this.category)
                 .status(this.status)
                 .imageUrl(this.imageUrl)
+                .code(this.code)
                 .build();
     }
 }
