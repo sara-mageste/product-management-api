@@ -30,7 +30,7 @@ export class ProductService {
     const params = new HttpParams()
       .set('page', page)
       .set('size', size)
-      .set('sort', sortBy); 
+      .set('sortBy', sortBy); 
     return this.http.get<PagedProductResponse>(
       `${this.API_URL}/paged`,
       { params }
@@ -48,11 +48,28 @@ export class ProductService {
       .set('name', name)
       .set('page', page)
       .set('size', size)
-      .set('sort', sortBy);
+      .set('sortBy', sortBy);
 
     return this.http.get<PagedProductResponse>(
       `${this.API_URL}/search`,
       { params }
     );
   }
+
+  getProductsWithFilters (filters: any, page: number){
+    let params = new HttpParams().set('page', String(page));
+
+    if (filters.sortBy) params = params.set ('sortBy', filters.sortBy);
+    if (filters.status) params = params.set ('status', filters.status);
+    if (filters.size) params = params.set ('size', filters.size);
+
+    if (filters.categories && filters.categories.length > 0){
+      filters.categories.forEach((cat: string) => {
+        params = params.append('categories', cat);
+      });
+    }
+
+    return this.http.get<any>(`${this.API_URL}/filter`, {params});
+  }
+
 }

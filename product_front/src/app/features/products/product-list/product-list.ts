@@ -106,4 +106,88 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  /* SORT BY */
+  filters = {
+    sortBy: null as string | null,
+    status: null as 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK' | null,
+    categories: [] as string[],
+    pageSize: null as number | null
+  };
+
+  setSortBy (sortBy: string){
+    this.filters.sortBy = sortBy;
+    this.loadProductsWithFilters();
+  }
+
+  setStatus (status: any){
+    this.filters.status = status;
+
+    // Rule: Disable quantity if OUT_OF_STOCK
+    if (status === 'OUT_OF_STOCK' && this.filters.sortBy?.includes ('quantity')){
+      this.filters.sortBy = null;
+    }
+
+    this.loadProductsWithFilters();
+  }
+
+  toggleCategory (category: string){
+    const index = this.filters.categories.indexOf(category);
+
+    if(index >= 0){
+      this.filters.categories.splice(index,1);
+    } else {
+      this.filters.categories.push(category);
+    }
+
+    this.loadProductsWithFilters();
+  }
+
+  setPageSize(size: number){
+    this.filters.pageSize = size;
+    this.pageSize = size;
+    this.loadProductsWithFilters();
+  }
+
+  loadProductsWithFilters(): void {
+    this.loading = true;
+
+    this.productService.getProductsWithFilters(
+      this.buildQueryParams(),
+      this.currentPage
+    ).subscribe({
+      next: (response) => {
+        this.products = response.products ?? [];
+        this.loading = false;
+      },
+      error: () => {
+        this.errorMessage = 'Error loading products';
+        this.loading = false;
+      }
+    });
+  }
+
+  // Null Ignore
+  buildQueryParams(): any{
+    const params: any = {};
+
+    if (this.filters.sortBy){
+      params.sortBy = this.filters.sortBy;
+    }
+
+    if (this.filters.status){
+      params.status = this.filters.status;
+    }
+
+    if (this.filters.categories.length > 0){
+      params.categories = this.filters.categories;
+    }
+
+    if (this.filters.pageSize){
+      params.size = this.filters.pageSize;
+    }else{
+      params.size = this.pageSize;
+    }
+
+    return params;
+  }
 }
