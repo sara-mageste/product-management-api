@@ -90,7 +90,7 @@ public class ProductService {
 
     // Filter products
     public Map<String, Object> getProductsWithFilters(
-            ProductCategory category,
+            List<ProductCategory> categories,
             ProductStatus status,
             int page,
             int size,
@@ -100,11 +100,14 @@ public class ProductService {
         Pageable pageable = buildPageable(page, size, sortBy);
         Page<Product> pageProducts;
 
-        if (category != null && status != null) {
-            pageProducts = repository.findByCategoryAndStatus(category, status, pageable);
-        } else if (category != null) {
-            pageProducts = repository.findByCategory(category, pageable);
-        } else if (status != null) {
+        boolean hasCategories = categories != null && !categories.isEmpty();
+        boolean hasStatus = status != null;
+
+        if (hasCategories && hasStatus) {
+            pageProducts = repository.findByCategoryInAndStatus(categories, status, pageable);
+        } else if (hasCategories) {
+            pageProducts = repository.findByCategoryIn(categories, pageable);
+        } else if (hasStatus) {
             pageProducts = repository.findByStatus(status, pageable);
         } else {
             pageProducts = repository.findAll(pageable);

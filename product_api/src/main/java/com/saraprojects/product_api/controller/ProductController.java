@@ -69,12 +69,12 @@ public class ProductController {
 
     @GetMapping("/filter")
     public Map<String, Object> getProductsWithFilter(
-            @RequestParam(required = false) ProductCategory category,
+            @RequestParam(required = false) List <ProductCategory> categories,
             @RequestParam(required = false) ProductStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
             @RequestParam(defaultValue = "name,asc") String sortBy
     ){
-        return service.getProductsWithFilters(category, status, page, size, sortBy);
+        return service.getProductsWithFilters(categories, status, page, size, sortBy);
     }
 }

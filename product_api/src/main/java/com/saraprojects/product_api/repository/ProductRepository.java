@@ -7,14 +7,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
 public interface ProductRepository extends JpaRepository<Product, Long> {
     Page<Product> findByNameStartingWithIgnoreCase(String name, Pageable pageable);
     Page<Product> findByCode(String code, Pageable pageable);
     boolean existsByCode(String code);
-    Page<Product> findByCategory(ProductCategory category, Pageable pageable);
+    Page<Product> findByCategoryIn(List<ProductCategory> categories, Pageable pageable);
     Page<Product> findByStatus(ProductStatus status, Pageable pageable);
-    Page<Product> findByCategoryAndStatus(
-        ProductCategory category,
+    Page<Product> findByCategoryInAndStatus(
+        List<ProductCategory> categories,
         ProductStatus status,
         Pageable pageable
     );
