@@ -25,6 +25,7 @@ export class ProductListComponent implements OnInit {
 
   currentPage = 0;
   pageSize = 8;
+  totalPages = 0;
 
   ignoreBlur = false;
 
@@ -181,6 +182,7 @@ export class ProductListComponent implements OnInit {
     this.productService.getProducts(params).subscribe({
       next: (response) => {
         this.products = response?.products ?? [];
+        this.totalPages = response?.totalPages ?? 0;
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -192,6 +194,18 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1){
+      this.currentPage++;
+      this.loadProductsWithFilters();
+    }
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0){
+      this.currentPage--;
+      this.loadProductsWithFilters();
+    }
+  }
 
 }

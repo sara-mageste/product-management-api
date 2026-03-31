@@ -80,7 +80,7 @@
     </div>
 
     <div class="sidebar-bottom">
-      <button class="action-icon back-button">
+      <button *ngIf="currentPage > 0" class="action-icon back-button" (click)="previousPage()">
         <span class="material-symbols-rounded">keyboard_arrow_left</span>
       </button>
     </div>
@@ -129,7 +129,7 @@
     </div>
 
     <div class="sidebar-bottom">
-      <button class="action-icon back-button">
+      <button *ngIf="currentPage < totalPages - 1" class="action-icon back-button" (click)="nextPage()">
         <span class="material-symbols-rounded">keyboard_arrow_right</span>
       </button>
     </div>
