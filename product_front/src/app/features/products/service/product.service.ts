@@ -21,55 +21,23 @@ export class ProductService {
 
   constructor(private http: HttpClient) {}
 
-  getProductsPaged(
-    page: number = 0,
-    size: number = 8,
-    sortBy: string = 'id,asc'
-  ): Observable<PagedProductResponse> {
+  getProducts(paramsObj: any): Observable<PagedProductResponse>{
 
-    const params = new HttpParams()
-      .set('page', page)
-      .set('size', size)
-      .set('sortBy', sortBy); 
-    return this.http.get<PagedProductResponse>(
-      `${this.API_URL}/paged`,
-      { params }
-    );
-  }
+    let params = new HttpParams();
 
-  searchProducts(
-    name: string,
-    page: number = 0,
-    size: number = 5,
-    sortBy: string = 'id,asc'
-  ): Observable<PagedProductResponse> {
+    Object.keys(paramsObj).forEach(key => {
+      const value = paramsObj[key];
 
-    const params = new HttpParams()
-      .set('name', name)
-      .set('page', page)
-      .set('size', size)
-      .set('sortBy', sortBy);
+      if (Array.isArray(value)) {
+        value.forEach(v => {
+          params = params.append(key, v);
+        });
+      } else if (value !== null && value !== undefined) {
+        params = params.set(key, value);
+      }
+    });
 
-    return this.http.get<PagedProductResponse>(
-      `${this.API_URL}/search`,
-      { params }
-    );
-  }
-
-  getProductsWithFilters (filters: any, page: number){
-    let params = new HttpParams().set('page', String(page));
-
-    if (filters.sortBy) params = params.set ('sortBy', filters.sortBy);
-    if (filters.status) params = params.set ('status', filters.status);
-    if (filters.size) params = params.set ('size', filters.size);
-
-    if (filters.categories && filters.categories.length > 0){
-      filters.categories.forEach((cat: string) => {
-        params = params.append('categories', cat);
-      });
-    }
-
-    return this.http.get<any>(`${this.API_URL}/filter`, {params});
+    return this.http.get<PagedProductResponse> (this.API_URL, {params});
   }
 
 }

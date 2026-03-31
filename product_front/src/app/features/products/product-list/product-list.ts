@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Product } from '../models/product.model';
@@ -21,11 +21,16 @@ export class ProductListComponent implements OnInit {
 
   searchTerm = '';
   isSearchOpen = false; 
+  isFilterOpen = false;
 
   currentPage = 0;
   pageSize = 8;
 
   ignoreBlur = false;
+
+  @ViewChild('searchContainer') searchContainer!: ElementRef;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('filterContainer') filterContainer!: ElementRef;
 
   constructor(
     private productService: ProductService,
@@ -37,30 +42,40 @@ export class ProductListComponent implements OnInit {
   }
 
   loadProducts(page: number = 0 ): void {
-    this.loading = true;
     this.currentPage = page;
-
-    this.productService.getProductsPaged(page, this.pageSize).subscribe({
-      next: (response) => {
-        this.products = response.products ?? [];
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'Error loading products';
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
+    this.loadProductsWithFilters();
   }
 
   trackById(index: number, product: any): number {
     return product.id;
   }
   
-  /* Opens and closes the search */
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  //Click Outside Global
+  @HostListener('document:click', ['$event'])
+  handleClickOutSide(event: MouseEvent): void{
+    
+    const target = event.target as HTMLElement;
 
+    //Search
+    if (
+      this.isSearchOpen &&
+      !this.searchContainer?.nativeElement.contains(target)
+    ){
+      this.isSearchOpen = false;
+    }
+
+    //Filter
+    if (
+      this.isFilterOpen &&
+      !this.filterContainer?.nativeElement.contains(target)
+    ){
+      this.isFilterOpen = false;
+    }
+
+  }
+
+  //SEARCH
+  
   toggleSearch() : void{
     this.isSearchOpen = !this.isSearchOpen;
 
@@ -71,39 +86,15 @@ export class ProductListComponent implements OnInit {
     } 
   }
 
-  closeSearch(): void {
-    if (this.ignoreBlur) {
-      this.ignoreBlur = false;
-      return;
-    }
-
-    this.isSearchOpen = false;
+  search(): void {
+    this.currentPage = 0;
+    this.loadProductsWithFilters();
   }
 
-  /* GLOBAL search on the back-end */
-  search(): void {
-    const term = this.searchTerm.trim();
+  //FILTER
 
-    if (!term) {
-      this.loadProducts(0);
-      return;
-    }
-
-    this.loading = true;
-    this.currentPage = 0;
-
-    this.productService.searchProducts(term, 0, this.pageSize).subscribe({
-      next: (response) => {
-        this.products = response.products ?? [];
-        this.loading = false;
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.errorMessage = 'Error loading products';
-        this.loading = false;
-        this.cdr.detectChanges();
-      }
-    });
+  toggleFilter(): void{
+    this.isFilterOpen = !this.isFilterOpen;
   }
 
   /* SORT BY */
@@ -115,15 +106,25 @@ export class ProductListComponent implements OnInit {
   };
 
   setSortBy (sortBy: string){
-    this.filters.sortBy = sortBy;
+    if (this.filters.sortBy === sortBy){
+      this.filters.sortBy = null;
+    } else {
+      this.filters.sortBy = sortBy;
+    }
+
     this.loadProductsWithFilters();
   }
 
   setStatus (status: any){
-    this.filters.status = status;
+
+    if(this.filters.status === status){
+      this.filters.status = null;
+    } else {
+      this.filters.status = status;
+    }
 
     // Rule: Disable quantity if OUT_OF_STOCK
-    if (status === 'OUT_OF_STOCK' && this.filters.sortBy?.includes ('quantity')){
+    if (this.filters.status === 'OUT_OF_STOCK' && this.filters.sortBy?.includes ('quantity')){
       this.filters.sortBy = null;
     }
 
@@ -145,49 +146,52 @@ export class ProductListComponent implements OnInit {
   setPageSize(size: number){
     this.filters.pageSize = size;
     this.pageSize = size;
+    this.currentPage = 0;
     this.loadProductsWithFilters();
   }
+
+  clearFilters(): void {
+    this.filters.sortBy = null;
+    this.filters.status = null;
+    this.filters.categories = [];
+    this.filters.pageSize = null;
+
+    this.pageSize = 8;
+    this.searchTerm = '';
+
+    this.cdr.detectChanges();
+
+    this.loadProducts(0);
+  }
+
+  //API CALL
 
   loadProductsWithFilters(): void {
     this.loading = true;
 
-    this.productService.getProductsWithFilters(
-      this.buildQueryParams(),
-      this.currentPage
-    ).subscribe({
+    const params = {
+      search: this.searchTerm?.trim() || null,
+      sortBy: this.filters.sortBy,
+      status: this.filters.status,
+      categories: this.filters.categories,
+      page: this.currentPage,
+      size: this.filters.pageSize || this.pageSize
+  };
+
+    this.productService.getProducts(params).subscribe({
       next: (response) => {
-        this.products = response.products ?? [];
+        this.products = response?.products ?? [];
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.errorMessage = 'Error loading products';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }
 
-  // Null Ignore
-  buildQueryParams(): any{
-    const params: any = {};
+  
 
-    if (this.filters.sortBy){
-      params.sortBy = this.filters.sortBy;
-    }
-
-    if (this.filters.status){
-      params.status = this.filters.status;
-    }
-
-    if (this.filters.categories.length > 0){
-      params.categories = this.filters.categories;
-    }
-
-    if (this.filters.pageSize){
-      params.size = this.filters.pageSize;
-    }else{
-      params.size = this.pageSize;
-    }
-
-    return params;
-  }
 }

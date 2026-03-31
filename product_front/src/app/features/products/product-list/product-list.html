@@ -4,8 +4,8 @@
   <aside class="sidebar left">
 
     <div class="sidebar-top">
-      <div class="search-container" [class.open]="isSearchOpen">
-        <button class="action-icon" (mousedown)="isSearchOpen && (ignoreBlur = true)" (click)="toggleSearch()">
+      <div #searchContainer class="search-container" [class.open]="isSearchOpen">
+        <button class="action-icon" (click)="toggleSearch()">
           <span class="material-symbols-rounded">search</span>
         </button>
 
@@ -15,13 +15,68 @@
           placeholder="Search products..."
           [(ngModel)]="searchTerm"
           (input)="search()"
-          (blur)="closeSearch()"
         />
       </div>
 
-      <button class="action-icon">
-        <span class="material-symbols-rounded">tune</span>
-      </button>
+      <div  #filterContainer class="filter-container">
+        <button class="action-icon" (click)="toggleFilter()">
+          <span class="material-symbols-rounded">tune</span>
+        </button>
+      </div>
+
+      <div #filterPanel class= "filters-panel" [class.open]="isFilterOpen"  (click)="$event.stopPropagation()">
+
+        <!-- SORT BY -->
+        <div class="filter-group">
+          <h4>SORT BY:</h4>
+          <div class="filter-grid sort-row">
+            <label><input type="checkbox" (change)="setSortBy('name,asc')" [checked]="filters.sortBy === 'name,asc'"> A-Z </label>
+            <label><input type="checkbox" (change)="setSortBy('name,desc')" [checked]="filters.sortBy === 'name,desc'"> Z-A </label>
+          </div>
+          <div class="filter-grid sort-row">
+            <label><input type="checkbox" (change)="setSortBy('price,asc')" [checked]="filters.sortBy === 'price,asc'"> Price ↑ </label>
+            <label><input type="checkbox" (change)="setSortBy('price,desc')" [checked]="filters.sortBy === 'price,desc'"> Price ↓ </label>
+          </div>
+          <div class="filter-grid sort-row">
+            <label><input type="checkbox" (change)="setSortBy('quantity,asc')" [checked]="filters.sortBy === 'quantity,asc'"> Quantity ↑ </label>
+            <label><input type="checkbox" (change)="setSortBy('quantity,desc')" [checked]="filters.sortBy === 'quantity,desc'"> Quantity ↓ </label>
+          </div>
+        </div>
+      
+        <!-- STATUS -->
+        <div class="filter-group">
+          <h4>STATUS:</h4>
+          <div class="filter-grid">
+            <label><input type="checkbox" (change)="setStatus('ACTIVE')" [checked]="filters.status === 'ACTIVE'"> Active </label>
+            <label><input type="checkbox" (change)="setStatus('INACTIVE')" [checked]="filters.status === 'INACTIVE'"> Inactive </label>
+            <label><input type="checkbox" (change)="setStatus('OUT_OF_STOCK')" [checked]="filters.status === 'OUT_OF_STOCK'"> Out os stock </label>
+          </div>
+        </div>
+
+        <!-- CATEGORY -->
+        <div class="filter-group">
+          <h4>CATEGORY:</h4>
+          <div class="filter-grid">
+            <label><input type="checkbox" (change)="toggleCategory('FRUITS')" [checked]="filters.categories.includes('FRUITS')"> Fruits </label>
+            <label><input type="checkbox" (change)="toggleCategory('VEGETABLES')" [checked]="filters.categories.includes('VEGETABLES')"> Vegetables </label>
+            <label><input type="checkbox" (change)="toggleCategory('SWEETS')" [checked]="filters.categories.includes('SWEETS')"> Sweets </label>
+          </div>
+        </div>
+
+        <!-- PRODUCTS PER PAGE -->
+        <div class="filter-group">
+          <h4>PRODUCTS PER PAGE:</h4>
+          <div class="filter-grid">
+            <label><input type="checkbox" (change)="setPageSize(8)" [checked]="filters.pageSize === 8"> 8 </label>
+            <label><input type="checkbox" (change)="setPageSize(12)" [checked]="filters.pageSize === 12"> 12 </label>
+            <label><input type="checkbox" (change)="setPageSize(24)" [checked]="filters.pageSize === 24"> 24 </label>
+          </div>
+        </div>
+
+        <hr>
+        <button class= "clear-filters" (click)="clearFilters()">CLEAR</button>
+      </div>
+
     </div>
 
     <div class="sidebar-bottom">
