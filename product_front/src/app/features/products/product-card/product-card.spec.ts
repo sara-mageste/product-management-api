@@ -15,6 +15,7 @@ describe('ProductCardComponent', () => {
 
     component.product = {
       id: 1,
+      code: '109834761',
       name: 'Test Product',
       description: 'Test Description',
       price: 10,

@@ -28,8 +28,26 @@
   background-position: center;
 }
 
+.info-line{
+  margin: 0;
+  font-size: 14px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.label{
+  color: #aaa78d;
+  font-style: italic;
+  font-size: 12px;
+}
+
+.value{
+  color: black;
+  font-style: normal;
+}
+
 .product-card h3 {
-  margin: 8px 0 0;
   font-size: 16px;
   color: black;
 }
@@ -67,9 +85,13 @@
   margin-top: 8px;
 }
 
-.quantity {
+.quantity,
+.price {
   font-size: 14px;
   color: black;
+  display: flex;
+  gap: 4px;
+  align-items: center;
 }
 
 .price {

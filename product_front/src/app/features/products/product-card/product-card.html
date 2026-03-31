@@ -10,16 +10,32 @@
   ></div>
 
   <div class="product-info">
-  <h3>{{ product.name }}</h3>
 
-  <p class="description">
-    {{ product.description }}
-  </p>
+    <p class="info-line">
+      <span class="label">Name:</span>
+      <span class="value"><h3 class="info-line">{{ product.name }}</h3></span>
+    </p>
 
-  <div class="product-meta">
-    <span class="quantity">Qtd: {{ product.quantity }}</span>
-    <span class="price">R$ {{ product.price }}</span>
+    
+    <p class="info-line">
+      <span class="label">Code:</span>
+      <span class="value">{{ product.code }}</span>
+    </p>
+
+    <div class="product-meta">
+
+      <span class="quantity">
+        <span class="label">Qnt:</span>
+        <span class="value">{{ product.quantity }}</span>
+      </span>
+
+      <span class="price">
+        <span class="label">Price:</span>
+        <span class="value">{{ product.price }}</span>
+      </span>
+
+    </div>
+
   </div>
-</div>
 
 </div>
