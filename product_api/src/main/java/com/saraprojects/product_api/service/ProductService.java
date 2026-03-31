@@ -5,8 +5,10 @@ import com.saraprojects.product_api.domain.enums.ProductStatus;
 import com.saraprojects.product_api.dto.ProductDTO;
 import com.saraprojects.product_api.model.Product;
 import com.saraprojects.product_api.repository.ProductRepository;
+import com.saraprojects.product_api.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashMap;
@@ -51,25 +53,19 @@ public class ProductService {
 
         return response;
     }
-
-    // Pagination
-    public Map<String, Object> getPagedResponse(int page, int size, String sortBy) {
+    //Unified Search + Filter + Pagination
+    public Map<String, Object> getProducts(
+            String search,
+            List<ProductCategory> categories,
+            ProductStatus status,
+            int page,
+            int size,
+            String sortBy
+    ){
         Pageable pageable = buildPageable(page, size, sortBy);
-        Page<Product> pageProducts = repository.findAll(pageable);
-        return buildResponse(pageProducts, sortBy);
-    }
 
-    // Search products by name or code(with pagination and sorting)
-    public Map<String, Object> searchProducts(String term, int page, int size, String sortBy) {
-        Pageable pageable = buildPageable(page, size, sortBy);
-        Page<Product> pageProducts;
-
-        if(term.matches("\\d+")){
-            pageProducts = repository.findByCode(term, pageable);
-
-        } else{
-            pageProducts = repository.findByNameStartingWithIgnoreCase(term, pageable);
-        }
+        Specification<Product> spec = ProductSpecification.filter(search, categories, status);
+        Page<Product> pageProducts = repository.findAll(spec, pageable);
 
         return buildResponse(pageProducts, sortBy);
     }
@@ -88,41 +84,15 @@ public class ProductService {
         return new ProductDTO(product);
     }
 
-    // Filter products
-    public Map<String, Object> getProductsWithFilters(
-            List<ProductCategory> categories,
-            ProductStatus status,
-            int page,
-            int size,
-            String sortBy
-    ) {
-
-        Pageable pageable = buildPageable(page, size, sortBy);
-        Page<Product> pageProducts;
-
-        boolean hasCategories = categories != null && !categories.isEmpty();
-        boolean hasStatus = status != null;
-
-        if (hasCategories && hasStatus) {
-            pageProducts = repository.findByCategoryInAndStatus(categories, status, pageable);
-        } else if (hasCategories) {
-            pageProducts = repository.findByCategoryIn(categories, pageable);
-        } else if (hasStatus) {
-            pageProducts = repository.findByStatus(status, pageable);
-        } else {
-            pageProducts = repository.findAll(pageable);
-        }
-
-        return buildResponse(pageProducts, sortBy);
-    }
-
     // Create new product
     public ProductDTO createProduct(ProductDTO dto) {
         if (repository.existsByCode(dto.getCode())) {
             throw new RuntimeException("Product code already exists");
         }
+
         Product product = dto.toEntity();
         Product saved = repository.save(product);
+
         return new ProductDTO(saved);
     }
 
@@ -145,6 +115,7 @@ public class ProductService {
         existing.setCode(dto.getCode());
 
         Product updated = repository.save(existing);
+
         return new ProductDTO(updated);
     }
 

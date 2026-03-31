@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -15,66 +16,50 @@ import java.util.Map;
 @RequestMapping("/api/products")
 @RequiredArgsConstructor
 public class ProductController {
+
     private final ProductService service;
 
+    //create Product
     @PostMapping
     public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody ProductDTO dto) {
         return ResponseEntity.ok(service.createProduct(dto));
     }
 
+    //Update Product
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDTO> updateProduct(
-            @PathVariable Long id,
-            @Valid @RequestBody ProductDTO dto
-    ) {
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
         return ResponseEntity.ok(service.updateProduct(id, dto));
     }
 
+    //Delete Product
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         service.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
+    //Get products by ID
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getProductById(id));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchProducts(
-            @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "id,asc") String sortBy
-    ) {
-        return ResponseEntity.ok(service.searchProducts(name, page, size, sortBy));
-    }
-
-    // List all without pagination
+    //Get products (Search+Filter+Pagination+Sort)
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAllProducts() {
-        return ResponseEntity.ok(service.getAllProducts());
-    }
-
-    // List all with pagination
-    @GetMapping("/paged")
-    public ResponseEntity<Map<String, Object>> getAllProductsPaged(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "8") int size,
-            @RequestParam(defaultValue = "price,asc") String sortBy
-    ) {
-        return ResponseEntity.ok(service.getPagedResponse(page, size, sortBy));
-    }
-
-    @GetMapping("/filter")
-    public Map<String, Object> getProductsWithFilter(
-            @RequestParam(required = false) List <ProductCategory> categories,
+    public ResponseEntity<Map<String, Object>> getProducts(
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) List<ProductCategory> categories,
             @RequestParam(required = false) ProductStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "8") int size,
             @RequestParam(defaultValue = "name,asc") String sortBy
-    ){
-        return service.getProductsWithFilters(categories, status, page, size, sortBy);
+    ) {
+        return ResponseEntity.ok(service.getProducts(search, categories, status, page, size, sortBy));
+    }
+
+    // Get all products
+    @GetMapping("/all")
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        return ResponseEntity.ok(service.getAllProducts());
     }
 }
