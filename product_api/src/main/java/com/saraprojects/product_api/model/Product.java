@@ -36,7 +36,8 @@ public class Product {
     @Column
     private ProductStatus status;
 
-    @Column(name = "image_url")
+    @Lob
+    @Column(name = "image_url", columnDefinition = "MEDIUMTEXT")
     private String imageUrl;
 
     @Column(unique = true, nullable = false, length = 20)

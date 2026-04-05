@@ -33,10 +33,6 @@ public class ProductDTO {
     @NotNull
     private ProductStatus status;
 
-    @jakarta.validation.constraints.Pattern(
-            regexp = "^(http|https)://.*$",
-            message = "Image URL must be a valid URL"
-    )
     private String imageUrl;
 
     @NotBlank
