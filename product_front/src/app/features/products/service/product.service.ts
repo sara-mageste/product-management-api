@@ -12,15 +12,14 @@ export interface PagedProductResponse {
   sortBy: string;
 }
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ProductService {
 
   private readonly API_URL = 'http://localhost:8080/api/products';
 
   constructor(private http: HttpClient) {}
 
+  // GET - Products with filters
   getProducts(paramsObj: any): Observable<PagedProductResponse>{
 
     let params = new HttpParams();
@@ -38,6 +37,22 @@ export class ProductService {
     });
 
     return this.http.get<PagedProductResponse> (this.API_URL, {params});
+  }
+
+  //GET - Product by ID (Popup details)
+  getProductById(id: number): Observable<Product>{
+    return this.http.get<Product>(`${this.API_URL}/${id}`);
+  }
+
+  // PUT - Update Product
+  updateProduct(product: Product): Observable<Product> {
+    return this.http.put<Product>(`${this.API_URL}/${product.id}`, product);
+  }
+
+  // DELETE - Product
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.API_URL}/${id}`);
+
   }
 
 }

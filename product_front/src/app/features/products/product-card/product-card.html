@@ -1,11 +1,11 @@
-<div class="product-card" *ngIf="product">
+<div class="product-card" *ngIf="product" (click)="onClick()">
 
   <div
     class="product-image"
     [ngStyle]="{
       'background-image': product.imageUrl
         ? 'url(' + product.imageUrl + ')'
-        : 'url(assets/placeholder.png)'
+        : 'url(images/placeholder.png)'
     }"
   ></div>
 

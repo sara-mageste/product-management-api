@@ -4,6 +4,7 @@
   <aside class="sidebar left">
 
     <div class="sidebar-top">
+
       <div #searchContainer class="search-container" [class.open]="isSearchOpen">
         <button class="action-icon" (click)="toggleSearch()">
           <span class="material-symbols-rounded">search</span>
@@ -28,15 +29,19 @@
 
         <!-- SORT BY -->
         <div class="filter-group">
+
           <h4>SORT BY:</h4>
+          
           <div class="filter-grid sort-row">
             <label><input type="checkbox" (change)="setSortBy('name,asc')" [checked]="filters.sortBy === 'name,asc'"> A-Z </label>
             <label><input type="checkbox" (change)="setSortBy('name,desc')" [checked]="filters.sortBy === 'name,desc'"> Z-A </label>
           </div>
+
           <div class="filter-grid sort-row">
             <label><input type="checkbox" (change)="setSortBy('price,asc')" [checked]="filters.sortBy === 'price,asc'"> Price ↑ </label>
             <label><input type="checkbox" (change)="setSortBy('price,desc')" [checked]="filters.sortBy === 'price,desc'"> Price ↓ </label>
           </div>
+
           <div class="filter-grid sort-row">
             <label><input type="checkbox" (change)="setSortBy('quantity,asc')" [checked]="filters.sortBy === 'quantity,asc'"> Quantity ↑ </label>
             <label><input type="checkbox" (change)="setSortBy('quantity,desc')" [checked]="filters.sortBy === 'quantity,desc'"> Quantity ↓ </label>
@@ -45,32 +50,72 @@
       
         <!-- STATUS -->
         <div class="filter-group">
+
           <h4>STATUS:</h4>
+
           <div class="filter-grid">
-            <label><input type="checkbox" (change)="setStatus('ACTIVE')" [checked]="filters.status === 'ACTIVE'"> Active </label>
-            <label><input type="checkbox" (change)="setStatus('INACTIVE')" [checked]="filters.status === 'INACTIVE'"> Inactive </label>
-            <label><input type="checkbox" (change)="setStatus('OUT_OF_STOCK')" [checked]="filters.status === 'OUT_OF_STOCK'"> Out os stock </label>
+            <label>
+              <input type="checkbox" 
+              (change)="setStatus(ProductStatus.ACTIVE)" 
+              [checked]="filters.status === ProductStatus.ACTIVE"> 
+              Active 
+            </label>
+            <label>
+              <input type="checkbox"
+              (change)="setStatus(ProductStatus.INACTIVE)"
+              [checked]="filters.status === ProductStatus.INACTIVE"> 
+              Inactive 
+            </label>
+            <label>
+              <input type="checkbox" 
+              (change)="setStatus(ProductStatus.OUT_OF_STOCK)"
+              [checked]="filters.status === ProductStatus.OUT_OF_STOCK"> 
+              Out of stock 
+            </label>
           </div>
+
         </div>
 
         <!-- CATEGORY -->
         <div class="filter-group">
+
           <h4>CATEGORY:</h4>
+
           <div class="filter-grid">
-            <label><input type="checkbox" (change)="toggleCategory('FRUITS')" [checked]="filters.categories.includes('FRUITS')"> Fruits </label>
-            <label><input type="checkbox" (change)="toggleCategory('VEGETABLES')" [checked]="filters.categories.includes('VEGETABLES')"> Vegetables </label>
-            <label><input type="checkbox" (change)="toggleCategory('SWEETS')" [checked]="filters.categories.includes('SWEETS')"> Sweets </label>
+            <label>
+              <input type="checkbox"
+              (change)="toggleCategory(ProductCategory.FRUITS)"
+              [checked]="filters.categories.includes(ProductCategory.FRUITS)"> 
+              Fruits 
+            </label>
+            <label>
+              <input type="checkbox"
+              (change)="toggleCategory(ProductCategory.VEGETABLES)"
+              [checked]="filters.categories.includes(ProductCategory.VEGETABLES)"> 
+              Vegetables 
+            </label>
+            <label>
+              <input type="checkbox"
+              (change)="toggleCategory(ProductCategory.SWEETS)"
+              [checked]="filters.categories.includes(ProductCategory.SWEETS)"> 
+              Sweets 
+            </label>
           </div>
+
         </div>
 
         <!-- PRODUCTS PER PAGE -->
+
         <div class="filter-group">
+
           <h4>PRODUCTS PER PAGE:</h4>
+
           <div class="filter-grid">
             <label><input type="checkbox" (change)="setPageSize(8)" [checked]="filters.pageSize === 8"> 8 </label>
             <label><input type="checkbox" (change)="setPageSize(12)" [checked]="filters.pageSize === 12"> 12 </label>
             <label><input type="checkbox" (change)="setPageSize(24)" [checked]="filters.pageSize === 24"> 24 </label>
           </div>
+
         </div>
 
         <hr>
@@ -88,6 +133,7 @@
   </aside>
 
   <!-- MAIN CONTENT -->
+
   <main class="products-content">
 
     <ng-container *ngIf="loading; else loadedState">
@@ -98,7 +144,7 @@
       <ng-container *ngIf="products.length > 0; else emptyState">
         <section class="products-grid">
           <app-product-card
-            *ngFor="let product of products; trackBy: trackById" [product]="product">
+            *ngFor="let product of products; trackBy: trackById" [product]="product" (productClick)="openProductDetails($event)">
           </app-product-card>
         </section>
       </ng-container>
@@ -135,5 +181,205 @@
     </div>
 
   </aside>
+
+</div>
+
+<!-- PRODUCT DETAILS POPUP -->
+
+<div class="modal-overlay" *ngIf="isDetailsOpen" (click)="closeDetails()">
+
+  <div class="modal-wrapper">
+
+    <div class="modal-content" (click)="$event.stopPropagation()">
+
+      <div class="modal-grid">
+
+        <!-- LEFT SIDE -->
+        <div class="modal-left">
+
+          <!-- NAME -->
+          <div class="form-group">
+            <label> NAME * </label>
+
+            <input type="text" [(ngModel)]="editableProduct!.name" 
+            [class.input-error]="triedSave && !editableProduct?.name" 
+            [disabled]="!isEditMode"/>
+
+            <span class="error-message" *ngIf="triedSave && !editableProduct?.name"> This field is required! </span>
+
+          </div>
+
+          <!-- CODE -->
+          <div class="form-group">
+            <label> CODE * </label>
+
+            <input type="text" [(ngModel)]="editableProduct!.code" 
+            [class.input-error]="triedSave && !editableProduct?.code"
+            [disabled]="!isEditMode"/>
+
+            <span class="error-message" *ngIf="triedSave && !editableProduct?.code"> This field is required! </span>
+
+          </div>
+
+          <!-- PRICE / DISCOUNT -->
+          <div class="form-row">
+
+            <div class="form-group">
+              <div class="label-container">
+                <label> PRICE * </label>
+              </div>
+
+              <input type="text" [(ngModel)]="editableProduct!.price" 
+              [class.input-error]="triedSave && !editableProduct?.price"
+              [disabled]="!isEditMode"/>
+
+              <span class="error-message" *ngIf="triedSave && !editableProduct?.price"> This field is required! </span>
+
+            </div>
+
+            <div class="form-group">
+
+              <div class="label-container">
+                <label> DISCOUNT </label>
+
+                <div class="info-container">
+                  <span class="material-symbols-rounded info-icon" (click)="toggleDiscountInfo()">info</span>
+                  <div class="info-ballon" *ngIf="showDiscountInfo">Temporarily unavailable</div>
+                </div>
+
+              </div>
+
+              <input type="text" [(ngModel)]="editableProduct!.discount" disabled/>
+            </div>
+
+          </div>
+
+          <!-- DESCRIPTION -->
+          <div class="form-group">
+            <label> DESCRIPTION </label>
+            <textarea rows="4" [(ngModel)]="editableProduct!.description" [disabled]="!isEditMode"></textarea>
+          </div>
+
+          <!-- CATEGORY / QUANTITY / STATUS -->
+          <div class="form-row bottom-row">
+
+            <div class="form-group">
+              <label> CATEGORY * </label>
+
+              <div class="custom-select">
+
+                <div class="selected" 
+                [class.input-error]="triedSave && !editableProduct?.category"
+                (click)="toggleCategoryDropdown()">{{ editableProduct?.category }}</div>
+
+                <span class="error-message" *ngIf="triedSave && !editableProduct?.category"> This field is required! </span>
+
+                <div class="dropdown" *ngIf="isCategoryOpen && isEditMode" (click)="$event.stopPropagation()">
+
+                  <div (click)="selectCategory(ProductCategory.FRUITS)">FRUITS</div>
+                  <div (click)="selectCategory(ProductCategory.VEGETABLES)">VEGETABLES</div>
+                  <div (click)="selectCategory(ProductCategory.SWEETS)">SWEETS</div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div class="form-group quantity">
+              <label> QUANTITY * </label>
+
+              <input type="text" [(ngModel)]="editableProduct!.quantity" 
+              [class.input-error]="triedSave && !editableProduct?.quantity"
+              [disabled]="!isEditMode"/>
+
+              <span class="error-message quantity-error" *ngIf="triedSave && !editableProduct?.quantity"> This field is required! </span>
+
+            </div>
+
+            <div class="form-group">
+              <label> STATUS </label>
+              <label class="switch">
+                <input type="checkbox" 
+                [checked]="editableProduct?.status === ProductStatus.ACTIVE" 
+                (change)="toggleStatus($event)" [disabled]="!isEditMode">
+                <span class="slider"></span>
+              </label>
+            </div>
+
+          </div>
+
+        </div>
+
+      <!-- RIGHT SIDE -->
+        <div class="modal-right">
+
+          <div class="modal-header">
+            
+            <button *ngIf="!isEditMode" class="edit-btn" (click)="enableEdit()">
+              <span class="material-symbols-rounded">edit</span>
+            </button>
+
+            <div class="btn-container" *ngIf="isEditMode">
+              <button class="btn-ok" (click)="saveChanges()">
+                <span class="material-symbols-rounded">check</span>
+              </button>
+
+              <button class="btn-cancel-edit" (click)="cancelEdit()">
+                <span class="material-symbols-rounded">close</span>
+              </button>
+            </div>
+
+          </div>
+
+          <label class="preview-label">PREVIEW</label>
+
+          <div class="image-preview">
+            <img [src]="editableProduct?.imageUrl || 'images/placeholder.png'"/>
+            <span class="material-symbols-rounded delete-icon" *ngIf="editableProduct?.imageUrl" 
+            (click)="removeImage()"> delete </span>
+          </div>
+
+          <input #fileInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden>
+
+          <button class="upload-btn" (click)="fileInput.click()">
+            <span class="material-symbols-rounded">upload</span>
+              Upload Files
+          </button>
+
+          <button class="delete-btn" (click)="deleteProduct(); $event.stopPropagation()">
+            <span class="material-symbols-rounded">delete</span>
+            Delete product
+          </button>
+
+        </div>
+
+      </div>
+  
+    </div>
+
+    <button class="action-icon-close" (click)="closeDetails()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+
+  </div>
+
+</div>
+
+<div class="delete-modal-overlay" *ngIf="showDeleteConfirm">
+
+  <div class="delete-modal">
+
+    <h3>Delete this product</h3>
+    <p> Are you sure you want to delete <strong>"{{ selectedProduct?.name }}"</strong>? </p>
+
+    <div class="delete-actions">
+
+      <button class="cancel-btn" (click)="cancelDelete()"> Cancel </button>
+      <button class="confirm-delete-btn" (click)="confirmDelete()"> Delete </button>
+
+    </div>
+
+  </div>
 
 </div>

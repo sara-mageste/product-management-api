@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ProductCardComponent } from './product-card';
 
+import { ProductCategory } from '../enums/product-category.enum';
+import { ProductStatus } from '../enums/product-status.enum';
+
 describe('ProductCardComponent', () => {
   let component: ProductCardComponent;
   let fixture: ComponentFixture<ProductCardComponent>;
@@ -20,7 +23,9 @@ describe('ProductCardComponent', () => {
       description: 'Test Description',
       price: 10,
       quantity: 5,
-      imageUrl: 'https://via.placeholder.com/150'
+      imageUrl: 'https://via.placeholder.com/150',
+      category: ProductCategory.FRUITS,
+      status: ProductStatus.ACTIVE
     };
 
     fixture.detectChanges();
@@ -32,7 +37,7 @@ describe('ProductCardComponent', () => {
 
   it ('should display the product name', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect (compiled.textContent).toContain('Test Description');
+    expect (compiled.textContent).toContain('Test Product');
   })
 
   it('should display the product description', () => {
@@ -44,4 +49,5 @@ describe('ProductCardComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect (compiled.textContent).toContain('10');    
   });
+
 });

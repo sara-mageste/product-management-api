@@ -1,9 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { Product } from '../models/product.model';
-import { ProductCardComponent } from '../product-card/product-card';
-import { ProductService } from '../service/product.service';
+import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core'; 
+import { CommonModule } from '@angular/common'; 
+import { FormsModule } from '@angular/forms'; 
+
+import { Product } from '../models/product.model'; 
+import { ProductCardComponent } from '../product-card/product-card'; 
+import { ProductService } from '../service/product.service'; 
+
+import { ProductStatus } from '../enums/product-status.enum'; 
+import { ProductCategory } from '../enums/product-category.enum';
 
 @Component({
   selector: 'app-product-list',
@@ -12,6 +16,7 @@ import { ProductService } from '../service/product.service';
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
+
 export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
@@ -22,6 +27,9 @@ export class ProductListComponent implements OnInit {
   searchTerm = '';
   isSearchOpen = false; 
   isFilterOpen = false;
+
+  ProductCategory = ProductCategory;
+  ProductStatus = ProductStatus;
 
   currentPage = 0;
   pageSize = 8;
@@ -47,7 +55,7 @@ export class ProductListComponent implements OnInit {
     this.loadProductsWithFilters();
   }
 
-  trackById(index: number, product: any): number {
+  trackById(index: number, product: Product): number {
     return product.id;
   }
   
@@ -101,38 +109,29 @@ export class ProductListComponent implements OnInit {
   /* SORT BY */
   filters = {
     sortBy: null as string | null,
-    status: null as 'ACTIVE' | 'INACTIVE' | 'OUT_OF_STOCK' | null,
-    categories: [] as string[],
+    status: null as ProductStatus | null,
+    categories: [] as ProductCategory[],
     pageSize: null as number | null
   };
 
   setSortBy (sortBy: string){
-    if (this.filters.sortBy === sortBy){
-      this.filters.sortBy = null;
-    } else {
-      this.filters.sortBy = sortBy;
-    }
-
+    this.filters.sortBy = this.filters.sortBy === sortBy ? null : sortBy;
     this.loadProductsWithFilters();
   }
 
-  setStatus (status: any){
+  setStatus (status: ProductStatus){
 
-    if(this.filters.status === status){
-      this.filters.status = null;
-    } else {
-      this.filters.status = status;
-    }
+    this.filters.status = this.filters.status === status ? null : status;
 
     // Rule: Disable quantity if OUT_OF_STOCK
-    if (this.filters.status === 'OUT_OF_STOCK' && this.filters.sortBy?.includes ('quantity')){
+    if (this.filters.status === ProductStatus.OUT_OF_STOCK && this.filters.sortBy?.includes ('quantity')){
       this.filters.sortBy = null;
     }
 
     this.loadProductsWithFilters();
   }
 
-  toggleCategory (category: string){
+  toggleCategory (category: ProductCategory){
     const index = this.filters.categories.indexOf(category);
 
     if(index >= 0){
@@ -142,6 +141,19 @@ export class ProductListComponent implements OnInit {
     }
 
     this.loadProductsWithFilters();
+  }
+
+  isCategoryOpen = false;
+
+  toggleCategoryDropdown(){
+    this.isCategoryOpen = !this.isCategoryOpen
+  }
+
+  selectCategory(category: ProductCategory) {
+    if (!this.editableProduct) return;
+
+    this.editableProduct.category = category;
+    this.isCategoryOpen = false;
   }
 
   setPageSize(size: number){
@@ -194,6 +206,7 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  //Pagination
   nextPage(): void {
     if (this.currentPage < this.totalPages - 1){
       this.currentPage++;
@@ -206,6 +219,192 @@ export class ProductListComponent implements OnInit {
       this.currentPage--;
       this.loadProductsWithFilters();
     }
+  }
+
+  //PopUp Product Details
+
+  isDetailsOpen = false;
+  isEditMode = false;
+  triedSave = false;
+  showDeleteConfirm = false;
+  showDiscountInfo = false;
+
+  selectedProduct: Product | null = null;
+  editableProduct: Product | null = null;
+  
+  openProductDetails(product: Product){
+    this.productService.getProductById(product.id).subscribe({
+      next: (response) => {
+        this.selectedProduct = response;
+        this.editableProduct = {...response};
+        this.isDetailsOpen = true;
+        this.isEditMode = false;
+        this.cdr.detectChanges();
+      }
+    });
+
+  }
+
+  enableEdit() {
+    this.isEditMode = true;
+  }
+
+  toggleStatus(event:any) {
+    if (!this.editableProduct) return;
+
+    const checked = event.target.checked;
+
+    if(checked){
+      this.editableProduct.status = ProductStatus.ACTIVE;
+    } else {
+      this.editableProduct.status = ProductStatus.INACTIVE;
+    }
+  }
+
+  cancelEdit() {
+    if (!this.selectedProduct) return;
+
+    this.editableProduct = {
+      ...this.selectedProduct
+    };
+
+    this.isEditMode = false;
+  }
+
+  saveChanges() {
+    if(!this.editableProduct) return;
+
+    this.triedSave = true;
+
+    //Required validation
+    if (
+      !this.editableProduct.name ||
+      !this.editableProduct.code ||
+      !this.editableProduct.price ||
+      !this.editableProduct.category ||
+      !this.editableProduct.quantity
+    ){
+      return;
+    }
+
+    //Rule quantity = 0 -> Status = OUT_OF_STOCK
+    if (this.editableProduct.quantity === 0) {
+      this.editableProduct.status = ProductStatus.OUT_OF_STOCK;
+    }
+
+    this.productService.updateProduct(this.editableProduct).subscribe ({
+      next: (updateProduct) => {
+      this.selectedProduct = updateProduct;
+      this.editableProduct = {...updateProduct};
+      this.isEditMode = false;
+      this.triedSave = false;
+      this.loadProductsWithFilters();
+      this.cdr.detectChanges();
+      }
+    });
+  }
+
+  toggleDiscountInfo(){
+    this.showDiscountInfo = !this.showDiscountInfo;
+  }
+
+  closeDetails(){
+    this.isDetailsOpen = false;
+    this.selectedProduct = null;
+    this.editableProduct = null;
+  }
+
+  // Delete Product
+  deleteProduct() {
+    this.showDeleteConfirm = true;
+  }
+
+  confirmDelete() {
+
+    if (!this.selectedProduct) return;
+
+    this.productService.deleteProduct(this.selectedProduct.id).subscribe(() => {
+      this.showDeleteConfirm = false;
+      this.closeDetails();
+      this.loadProductsWithFilters();
+    });
+
+  }
+
+  cancelDelete() {
+    this.showDeleteConfirm = false;
+  }
+
+  // Image Update
+  selectedImageFile: File | null = null;
+
+  onImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+
+    if (!file || !this.editableProduct) return;
+
+    if (!file.type.startsWith('image/')) {
+      console.error("Selected file is not an image!");
+      return;
+    }
+
+    if (file.size > 5_000_000) { // 5MB
+      console.error("File too large! Max 5MB.");
+      return;
+    }
+
+    this.selectedImageFile = file;
+
+    const reader = new FileReader;
+
+    reader.onload = () => {
+      const base64 = reader.result as string;
+
+      //Update preview immediately
+      this.editableProduct!.imageUrl = base64;
+      this.selectedProduct!.imageUrl = base64;
+      this.cdr.detectChanges();
+      this.saveImage(base64);
+    };
+
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
+
+  saveImage(base64: string) {
+    if (!this.editableProduct) return;
+
+    const productToUpdate = { ...this.editableProduct, imageUrl: base64 };
+
+    this.productService.updateProduct(productToUpdate).subscribe({
+      next: (updatedProduct) => {
+        this.selectedProduct = {...updatedProduct};
+        this.editableProduct = { ...updatedProduct};
+        this.loadProductsWithFilters();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error("Error updating image", err),
+    });
+  }
+
+  removeImage(){
+    if (!this.editableProduct) return;
+
+    this.editableProduct.imageUrl = null;
+    this.selectedProduct!.imageUrl = null;
+
+    const productToUpdate = {...this.editableProduct, imageUrl: null};
+
+    this.productService.updateProduct(productToUpdate).subscribe({
+      next: (updatedProduct) => {
+        this.selectedProduct = {...updatedProduct};
+        this.editableProduct = { ...updatedProduct};
+        this.loadProductsWithFilters();
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error("Error removing image", err),
+    });
   }
 
 }

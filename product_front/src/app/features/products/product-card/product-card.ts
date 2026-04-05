@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Product } from '../models/product.model';
 
@@ -10,5 +10,12 @@ import { Product } from '../models/product.model';
   styleUrl: './product-card.css',
 })
 export class ProductCardComponent {
+
   @Input() product!: Product;
+  @Output() productClick = new EventEmitter<Product>();
+
+  onClick() {
+    this.productClick.emit(this.product);
+  }
+  
 }
