@@ -9,10 +9,12 @@ import { ProductService } from '../service/product.service';
 import { ProductStatus } from '../enums/product-status.enum'; 
 import { ProductCategory } from '../enums/product-category.enum';
 
+import { ProductModalComponent } from '../product-modal/product-modal';
+
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, ProductModalComponent],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
@@ -64,6 +66,10 @@ export class ProductListComponent implements OnInit {
   handleClickOutSide(event: MouseEvent): void{
     
     const target = event.target as HTMLElement;
+
+    if (target.closest('.modal-content')) {
+      return;
+    }
 
     //Search
     if (
@@ -299,7 +305,6 @@ export class ProductListComponent implements OnInit {
       this.isEditMode = false;
       this.triedSave = false;
       this.loadProductsWithFilters();
-      this.cdr.detectChanges();
       }
     });
   }

@@ -4,3 +4,32 @@ html, body {
   height: 100%;
   font-family: 'DM Sans', sans-serif;
 }
+
+.action-icon {
+  width: 37px;
+  height: 37px;
+  border-radius: 50%;
+  border: none;
+
+  background-color: #eaeae1;
+  color: #c5c3aa;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  padding: 0;
+}
+
+/* Chrome, Safari, Edge */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}

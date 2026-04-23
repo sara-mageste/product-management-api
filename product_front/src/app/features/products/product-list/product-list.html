@@ -184,187 +184,28 @@
 
 </div>
 
-<!-- PRODUCT DETAILS POPUP -->
+<app-product-modal
+  [isDetailsOpen]="isDetailsOpen"
+  [editableProduct]="editableProduct"
+  [isEditMode]="isEditMode"
+  [triedSave]="triedSave"
+  [showDiscountInfo]="showDiscountInfo"
+  [isCategoryOpen]="isCategoryOpen"
 
-<div class="modal-overlay" *ngIf="isDetailsOpen" (click)="closeDetails()">
+  (close)="closeDetails()"
+  (enableEdit)="enableEdit()"
+  (cancelEdit)="cancelEdit()"
+  (save)="saveChanges()"
 
-  <div class="modal-wrapper">
+  (toggleStatus)="toggleStatus($event)"
+  (toggleDiscountInfo)="toggleDiscountInfo()"
+  (selectCategory)="selectCategory($event)"
 
-    <div class="modal-content" (click)="$event.stopPropagation()">
-
-      <div class="modal-grid">
-
-        <!-- LEFT SIDE -->
-        <div class="modal-left">
-
-          <!-- NAME -->
-          <div class="form-group">
-            <label> NAME * </label>
-
-            <input type="text" [(ngModel)]="editableProduct!.name" 
-            [class.input-error]="triedSave && !editableProduct?.name" 
-            [disabled]="!isEditMode"/>
-
-            <span class="error-message" *ngIf="triedSave && !editableProduct?.name"> This field is required! </span>
-
-          </div>
-
-          <!-- CODE -->
-          <div class="form-group">
-            <label> CODE * </label>
-
-            <input type="text" [(ngModel)]="editableProduct!.code" 
-            [class.input-error]="triedSave && !editableProduct?.code"
-            [disabled]="!isEditMode"/>
-
-            <span class="error-message" *ngIf="triedSave && !editableProduct?.code"> This field is required! </span>
-
-          </div>
-
-          <!-- PRICE / DISCOUNT -->
-          <div class="form-row">
-
-            <div class="form-group">
-              <div class="label-container">
-                <label> PRICE * </label>
-              </div>
-
-              <input type="text" [(ngModel)]="editableProduct!.price" 
-              [class.input-error]="triedSave && !editableProduct?.price"
-              [disabled]="!isEditMode"/>
-
-              <span class="error-message" *ngIf="triedSave && !editableProduct?.price"> This field is required! </span>
-
-            </div>
-
-            <div class="form-group">
-
-              <div class="label-container">
-                <label> DISCOUNT </label>
-
-                <div class="info-container">
-                  <span class="material-symbols-rounded info-icon" (click)="toggleDiscountInfo()">info</span>
-                  <div class="info-ballon" *ngIf="showDiscountInfo">Temporarily unavailable</div>
-                </div>
-
-              </div>
-
-              <input type="text" [(ngModel)]="editableProduct!.discount" disabled/>
-            </div>
-
-          </div>
-
-          <!-- DESCRIPTION -->
-          <div class="form-group">
-            <label> DESCRIPTION </label>
-            <textarea rows="4" [(ngModel)]="editableProduct!.description" [disabled]="!isEditMode"></textarea>
-          </div>
-
-          <!-- CATEGORY / QUANTITY / STATUS -->
-          <div class="form-row bottom-row">
-
-            <div class="form-group">
-              <label> CATEGORY * </label>
-
-              <div class="custom-select">
-
-                <div class="selected" 
-                [class.input-error]="triedSave && !editableProduct?.category"
-                (click)="toggleCategoryDropdown()">{{ editableProduct?.category }}</div>
-
-                <span class="error-message" *ngIf="triedSave && !editableProduct?.category"> This field is required! </span>
-
-                <div class="dropdown" *ngIf="isCategoryOpen && isEditMode" (click)="$event.stopPropagation()">
-
-                  <div (click)="selectCategory(ProductCategory.FRUITS)">FRUITS</div>
-                  <div (click)="selectCategory(ProductCategory.VEGETABLES)">VEGETABLES</div>
-                  <div (click)="selectCategory(ProductCategory.SWEETS)">SWEETS</div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="form-group quantity">
-              <label> QUANTITY * </label>
-
-              <input type="text" [(ngModel)]="editableProduct!.quantity" 
-              [class.input-error]="triedSave && !editableProduct?.quantity"
-              [disabled]="!isEditMode"/>
-
-              <span class="error-message quantity-error" *ngIf="triedSave && !editableProduct?.quantity"> This field is required! </span>
-
-            </div>
-
-            <div class="form-group">
-              <label> STATUS </label>
-              <label class="switch">
-                <input type="checkbox" 
-                [checked]="editableProduct?.status === ProductStatus.ACTIVE" 
-                (change)="toggleStatus($event)" [disabled]="!isEditMode">
-                <span class="slider"></span>
-              </label>
-            </div>
-
-          </div>
-
-        </div>
-
-      <!-- RIGHT SIDE -->
-        <div class="modal-right">
-
-          <div class="modal-header">
-            
-            <button *ngIf="!isEditMode" class="edit-btn" (click)="enableEdit()">
-              <span class="material-symbols-rounded">edit</span>
-            </button>
-
-            <div class="btn-container" *ngIf="isEditMode">
-              <button class="btn-ok" (click)="saveChanges()">
-                <span class="material-symbols-rounded">check</span>
-              </button>
-
-              <button class="btn-cancel-edit" (click)="cancelEdit()">
-                <span class="material-symbols-rounded">close</span>
-              </button>
-            </div>
-
-          </div>
-
-          <label class="preview-label">PREVIEW</label>
-
-          <div class="image-preview">
-            <img [src]="editableProduct?.imageUrl || 'images/placeholder.png'"/>
-            <span class="material-symbols-rounded delete-icon" *ngIf="editableProduct?.imageUrl" 
-            (click)="removeImage()"> delete </span>
-          </div>
-
-          <input #fileInput type="file" accept="image/*" (change)="onImageSelected($event)" hidden>
-
-          <button class="upload-btn" (click)="fileInput.click()">
-            <span class="material-symbols-rounded">upload</span>
-              Upload Files
-          </button>
-
-          <button class="delete-btn" (click)="deleteProduct(); $event.stopPropagation()">
-            <span class="material-symbols-rounded">delete</span>
-            Delete product
-          </button>
-
-        </div>
-
-      </div>
-  
-    </div>
-
-    <button class="action-icon-close" (click)="closeDetails()">
-      <span class="material-symbols-rounded">close</span>
-    </button>
-
-  </div>
-
-</div>
+  (toggleCategoryDropdown)="toggleCategoryDropdown()"
+  (deleteProductClick)="deleteProduct()"
+  (removeImage)="removeImage()"
+  (imageSelected)="onImageSelected($event)"
+></app-product-modal>
 
 <div class="delete-modal-overlay" *ngIf="showDeleteConfirm">
 
