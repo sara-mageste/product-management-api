@@ -1,0 +1,18 @@
+<div class="delete-modal-overlay" *ngIf="isOpen">
+
+  <div class="delete-modal" (click)="$event.stopPropagation()">
+
+    <h3>Delete this product</h3>
+    <p>
+      Are you sure you want to delete 
+      <strong>"{{ productName }}"</strong>?
+    </p>
+
+    <div class="delete-actions">
+      <button class="cancel-btn" (click)="cancel.emit()">Cancel</button>
+      <button class="confirm-delete-btn" (click)="confirm.emit()">Delete</button>
+    </div>
+
+  </div>
+
+</div>

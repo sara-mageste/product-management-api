@@ -10,11 +10,12 @@ import { ProductStatus } from '../enums/product-status.enum';
 import { ProductCategory } from '../enums/product-category.enum';
 
 import { ProductModalComponent } from '../product-modal/product-modal';
+import { DeleteConfirmModalComponent } from '../product-delete-modal/product-delete-modal';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent, ProductModalComponent],
+  imports: [CommonModule, FormsModule, ProductCardComponent, ProductModalComponent, DeleteConfirmModalComponent],
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })

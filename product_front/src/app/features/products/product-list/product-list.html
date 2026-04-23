@@ -207,20 +207,10 @@
   (imageSelected)="onImageSelected($event)"
 ></app-product-modal>
 
-<div class="delete-modal-overlay" *ngIf="showDeleteConfirm">
+<app-delete-confirm-modal
+  [isOpen]="showDeleteConfirm"
+  [productName]="selectedProduct?.name ?? null"
 
-  <div class="delete-modal">
-
-    <h3>Delete this product</h3>
-    <p> Are you sure you want to delete <strong>"{{ selectedProduct?.name }}"</strong>? </p>
-
-    <div class="delete-actions">
-
-      <button class="cancel-btn" (click)="cancelDelete()"> Cancel </button>
-      <button class="confirm-delete-btn" (click)="confirmDelete()"> Delete </button>
-
-    </div>
-
-  </div>
-
-</div>
+  (confirm)="confirmDelete()"
+  (cancel)="cancelDelete()"
+></app-delete-confirm-modal>
