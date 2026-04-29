@@ -71,7 +71,7 @@
   display: grid;
   grid-template-columns: 1fr 110px 60px;
   gap: 16px;
-  align-items: flex-end;
+  align-items: flex-start;
 }
 
 label {
@@ -312,7 +312,8 @@ textarea {
 
 /* image and delete buttons*/
 .upload-btn,
-.delete-btn {
+.delete-btn,
+.create-btn {
   height: 42px;
   background:#787662;
   color: #eaeae1;
@@ -328,7 +329,8 @@ textarea {
 }
 
 .upload-btn,
-.delete-btn {
+.delete-btn,
+.create-btn {
   height: 42px;
 }
 
@@ -340,6 +342,9 @@ textarea {
   background:#a7382a;
 }
 
+.create-btn {
+  background:#8ac731;
+}
 
 /* Switch */
 .switch {

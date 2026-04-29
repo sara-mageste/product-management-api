@@ -1,4 +1,4 @@
-<div class="modal-overlay" *ngIf="isDetailsOpen" (click)="close.emit()">
+<div class="modal-overlay" *ngIf="isDetailsOpen" (click)="closeAttempt.emit()">
 
   <div class="modal-wrapper">
 
@@ -95,7 +95,7 @@
 
                 <div class="selected" 
                 [class.input-error]="triedSave && !editableProduct?.category"
-                (click)="toggleCategoryDropdown.emit()">{{ editableProduct?.category }}</div>
+                (click)="toggleCategoryDropdown.emit()">{{ editableProduct?.category || 'SELECT' }}</div>
 
                 <span class="error-message" *ngIf="triedSave && !editableProduct?.category"> This field is required! </span>
 
@@ -145,11 +145,11 @@
 
           <div class="modal-header">
             
-            <button *ngIf="!isEditMode" class="edit-btn" (click)="enableEdit.emit()">
+            <button *ngIf="!isEditMode && mode !== 'create'" class="edit-btn" (click)="enableEdit.emit()">
               <span class="material-symbols-rounded">edit</span>
             </button>
 
-            <div class="btn-container" *ngIf="isEditMode">
+            <div class="btn-container" *ngIf="isEditMode && mode !== 'create'">
               <button class="btn-ok" (click)="save.emit(); $event.stopPropagation()">
                 <span class="material-symbols-rounded">check</span>
               </button>
@@ -176,7 +176,12 @@
               Upload Files
           </button>
 
-          <button class="delete-btn" (click)="deleteProductClick.emit(); $event.stopPropagation()">
+          <button *ngIf="mode === 'create'" class="create-btn" (click)="save.emit(); $event.stopPropagation()">
+            <span class="material-symbols-rounded">wand_stars</span>
+            Create product
+          </button>
+
+          <button *ngIf="mode !== 'create'" class="delete-btn" (click)="deleteProductClick.emit(); $event.stopPropagation()">
             <span class="material-symbols-rounded">delete</span>
             Delete product
           </button>
@@ -187,7 +192,7 @@
   
     </div>
 
-    <button class="action-icon-close" (click)="close.emit()">
+    <button class="action-icon-close" (click)="closeAttempt.emit()">
       <span class="material-symbols-rounded">close</span>
     </button>
 

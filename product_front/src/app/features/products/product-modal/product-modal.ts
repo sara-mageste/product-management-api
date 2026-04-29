@@ -19,6 +19,7 @@ export class ProductModalComponent {
   @Input() editableProduct!: Product | null;
   @Input() isEditMode = false;
   @Input() triedSave = false;
+  @Input() mode: 'view' | 'edit' | 'create' = 'view';
   @Input() showDiscountInfo = false;
   @Input() isCategoryOpen = false;
   @Output() enableEdit = new EventEmitter<void>();
@@ -32,6 +33,7 @@ export class ProductModalComponent {
   @Output() deleteProductClick  = new EventEmitter<void>();
   @Output() removeImage = new EventEmitter<void>();
   @Output() imageSelected = new EventEmitter<Event>();
+  @Output() closeAttempt = new EventEmitter<void>();
 
   ProductStatus = ProductStatus;
   ProductCategory = ProductCategory;

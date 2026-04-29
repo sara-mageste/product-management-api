@@ -39,6 +39,7 @@ export class ProductListComponent implements OnInit {
   totalPages = 0;
 
   ignoreBlur = false;
+  showExitConfirm = false;
 
   @ViewChild('searchContainer') searchContainer!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
@@ -59,7 +60,7 @@ export class ProductListComponent implements OnInit {
   }
 
   trackById(index: number, product: Product): number {
-    return product.id;
+    return product.id!;
   }
   
   //Click Outside Global
@@ -179,8 +180,6 @@ export class ProductListComponent implements OnInit {
     this.pageSize = 8;
     this.searchTerm = '';
 
-    this.cdr.detectChanges();
-
     this.loadProducts(0);
   }
 
@@ -203,12 +202,12 @@ export class ProductListComponent implements OnInit {
         this.products = response?.products ?? [];
         this.totalPages = response?.totalPages ?? 0;
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       },
       error: () => {
         this.errorMessage = 'Error loading products';
         this.loading = false;
-        this.cdr.detectChanges();
+        this.cdr.markForCheck();
       }
     });
   }
@@ -228,32 +227,78 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  //PopUp Product Details
+  //PopUp Product
 
   isDetailsOpen = false;
   isEditMode = false;
   triedSave = false;
+  mode: 'view' | 'edit' | 'create' = 'view';
   showDeleteConfirm = false;
   showDiscountInfo = false;
 
   selectedProduct: Product | null = null;
   editableProduct: Product | null = null;
   
+  openCreateProduct() {
+    this.editableProduct = {
+      name: '',
+      code: '',
+      price: 0,
+      category: null,
+      quantity: 0,
+      status: ProductStatus.ACTIVE,
+      description: '',
+      imageUrl: null
+    };
+
+    this.selectedProduct = null;
+    this.isDetailsOpen = true;
+    this.isEditMode = true;
+    this.mode = 'create';
+    this.triedSave = false;
+  }
+  
   openProductDetails(product: Product){
-    this.productService.getProductById(product.id).subscribe({
+    this.productService.getProductById(product.id!).subscribe({
       next: (response) => {
         this.selectedProduct = response;
         this.editableProduct = {...response};
         this.isDetailsOpen = true;
         this.isEditMode = false;
+        this.mode = 'view';
         this.cdr.detectChanges();
       }
     });
 
   }
 
+  hasUnsavedChanges(): boolean {
+    if (!this.editableProduct) return false;
+
+    if (this.mode === 'create') {
+      return !!(
+        this.editableProduct.name ||
+        this.editableProduct.code ||
+        this.editableProduct.price ||
+        this.editableProduct.category ||
+        this.editableProduct.quantity ||
+        this.editableProduct.description ||
+        this.editableProduct.imageUrl
+      );
+    }
+
+    if (this.mode === 'edit' || this.mode === 'view') {
+      return JSON.stringify(this.editableProduct) !== JSON.stringify(this.selectedProduct);
+    }
+
+    return false;
+  }
+
+  
+
   enableEdit() {
     this.isEditMode = true;
+    this.mode = 'edit';
   }
 
   toggleStatus(event:any) {
@@ -299,15 +344,28 @@ export class ProductListComponent implements OnInit {
       this.editableProduct.status = ProductStatus.OUT_OF_STOCK;
     }
 
-    this.productService.updateProduct(this.editableProduct).subscribe ({
-      next: (updateProduct) => {
-      this.selectedProduct = updateProduct;
-      this.editableProduct = {...updateProduct};
-      this.isEditMode = false;
-      this.triedSave = false;
-      this.loadProductsWithFilters();
-      }
-    });
+    if (this.mode === 'create') {
+      this.productService.createProduct(this.editableProduct).subscribe({
+        next: (newProduct) => {
+          this.selectedProduct = newProduct;
+          this.editableProduct = { ...newProduct };
+          this.isEditMode = false;
+          this.triedSave = false;
+          this.closeDetails();
+          this.loadProductsWithFilters();
+        }
+      });
+    } else {
+      this.productService.updateProduct(this.editableProduct).subscribe({
+        next: (updatedProduct) => {
+          this.selectedProduct = updatedProduct;
+          this.editableProduct = { ...updatedProduct };
+          this.isEditMode = false;
+          this.triedSave = false;
+          this.loadProductsWithFilters();
+        }
+      });
+    }
   }
 
   toggleDiscountInfo(){
@@ -318,6 +376,27 @@ export class ProductListComponent implements OnInit {
     this.isDetailsOpen = false;
     this.selectedProduct = null;
     this.editableProduct = null;
+    this.triedSave = false;
+    this.mode = 'view';
+  }
+
+  handleCloseAttempt(){
+
+    if (this.hasUnsavedChanges()) {
+      this.showExitConfirm = true;
+      return;
+    }
+
+    this.closeDetails();
+  }
+
+  confirmExit() {
+  this.showExitConfirm = false;
+  this.closeDetails();
+  }
+
+  cancelExit() {
+    this.showExitConfirm = false;
   }
 
   // Delete Product
@@ -329,7 +408,7 @@ export class ProductListComponent implements OnInit {
 
     if (!this.selectedProduct) return;
 
-    this.productService.deleteProduct(this.selectedProduct.id).subscribe(() => {
+    this.productService.deleteProduct(this.selectedProduct.id!).subscribe(() => {
       this.showDeleteConfirm = false;
       this.closeDetails();
       this.loadProductsWithFilters();
@@ -369,7 +448,11 @@ export class ProductListComponent implements OnInit {
 
       //Update preview immediately
       this.editableProduct!.imageUrl = base64;
-      this.selectedProduct!.imageUrl = base64;
+      
+      if (this.selectedProduct) {
+      this.selectedProduct.imageUrl = base64;
+    }
+
       this.cdr.detectChanges();
       this.saveImage(base64);
     };
@@ -388,7 +471,6 @@ export class ProductListComponent implements OnInit {
         this.selectedProduct = {...updatedProduct};
         this.editableProduct = { ...updatedProduct};
         this.loadProductsWithFilters();
-        this.cdr.detectChanges();
       },
       error: (err) => console.error("Error updating image", err),
     });
@@ -407,7 +489,6 @@ export class ProductListComponent implements OnInit {
         this.selectedProduct = {...updatedProduct};
         this.editableProduct = { ...updatedProduct};
         this.loadProductsWithFilters();
-        this.cdr.detectChanges();
       },
       error: (err) => console.error("Error removing image", err),
     });

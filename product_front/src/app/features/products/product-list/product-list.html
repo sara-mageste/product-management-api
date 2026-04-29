@@ -166,7 +166,7 @@
     </div>
 
     <div class="sidebar-center">
-      <button class="action-icon">
+      <button class="action-icon" (click)="openCreateProduct()">
         <span class="material-symbols-rounded">add</span>
       </button>
       <button class="action-icon">
@@ -191,8 +191,9 @@
   [triedSave]="triedSave"
   [showDiscountInfo]="showDiscountInfo"
   [isCategoryOpen]="isCategoryOpen"
+  [mode]="mode"
 
-  (close)="closeDetails()"
+  (closeAttempt)="handleCloseAttempt()"
   (enableEdit)="enableEdit()"
   (cancelEdit)="cancelEdit()"
   (save)="saveChanges()"
@@ -209,8 +210,18 @@
 
 <app-delete-confirm-modal
   [isOpen]="showDeleteConfirm"
-  [productName]="selectedProduct?.name ?? null"
-
+  [title]="'Delete product'"
+  [message]="'Are you sure you want to delete ' + selectedProduct?.name + '?'"
+  [confirmText]="'Delete'"
   (confirm)="confirmDelete()"
   (cancel)="cancelDelete()"
+></app-delete-confirm-modal>
+
+<app-delete-confirm-modal
+  [isOpen]="showExitConfirm"
+  [title]="'Unsaved changes'"
+  [message]="'You have unsaved changes. Do you really want to leave?'"
+  [confirmText]="'Leave'"
+  (confirm)="confirmExit()"
+  (cancel)="cancelExit()"
 ></app-delete-confirm-modal>
