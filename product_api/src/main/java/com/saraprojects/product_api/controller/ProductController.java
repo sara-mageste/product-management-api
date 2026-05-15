@@ -26,20 +26,27 @@ public class ProductController {
     }
 
     //Update Product
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductDTO dto) {
         return ResponseEntity.ok(service.updateProduct(id, dto));
     }
 
     //Delete Product
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/id/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         service.deleteProduct(id);
         return ResponseEntity.noContent().build();
     }
 
+    //Delete Selected Products
+    @DeleteMapping("/bulk-delete")
+    public ResponseEntity<Void> deleteProducts(@RequestBody List<Long> ids) {
+        service.deleteProducts(ids);
+        return ResponseEntity.noContent().build();
+    }
+
     //Get products by ID
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
         return ResponseEntity.ok(service.getProductById(id));
     }

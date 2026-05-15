@@ -126,4 +126,9 @@ public class ProductService {
         }
         repository.deleteById(id);
     }
+
+    // Delete selected products
+    public void deleteProducts(List<Long> ids) {
+        repository.deleteAllById(ids);
+    }
 }
