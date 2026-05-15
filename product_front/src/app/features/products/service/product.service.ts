@@ -41,12 +41,12 @@ export class ProductService {
 
   //GET - Product by ID (Popup details)
   getProductById(id: number): Observable<Product>{
-    return this.http.get<Product>(`${this.API_URL}/${id}`);
+    return this.http.get<Product>(`${this.API_URL}/id/${id}`);
   }
 
   // PUT - Update Product
   updateProduct(product: Product): Observable<Product> {
-    return this.http.put<Product>(`${this.API_URL}/${product.id}`, product);
+    return this.http.put<Product>(`${this.API_URL}/id/${product.id}`, product);
   }
 
   // POST - Create Product
@@ -56,8 +56,14 @@ export class ProductService {
 
   // DELETE - Product
   deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.API_URL}/${id}`);
+    return this.http.delete<void>(`${this.API_URL}/id/${id}`);
+  }
 
+  // DELETE - Selected Product
+  deleteProducts(ids: number[]): Observable<void> {
+    return this.http.request<void>('delete', `${this.API_URL}/bulk-delete`, {
+      body: ids
+    });
   }
 
 }

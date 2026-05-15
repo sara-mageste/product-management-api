@@ -1,4 +1,10 @@
-<div class="product-card" *ngIf="product" (click)="onClick()">
+<div
+  class="product-card"
+  *ngIf="product"
+  (click)="onClick()"
+  [class.delete-mode]="isDeleteMode"
+  [class.selected]="isSelected"
+>
 
   <div
     class="product-image"

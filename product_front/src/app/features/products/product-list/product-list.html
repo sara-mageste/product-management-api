@@ -141,10 +141,32 @@
     </ng-container>
 
     <ng-template #loadedState>
+      <div class="delete-toolbar" *ngIf="isDeleteMode">
+          <span class="delete-message">
+            SELECT THE PRODUCTS YOU WANT TO REMOVE
+          </span>
+          <div class="delete-right">
+            <span class="selected-count">
+              {{ selectedProducts.length }} selected
+            </span>
+            <button
+              class="delete-products-btn"
+              [disabled]="selectedProducts.length === 0"
+              (click)="deleteSelectedProducts()"
+            >
+              Delete products
+            </button>
+          </div>
+        </div>
+
       <ng-container *ngIf="products.length > 0; else emptyState">
         <section class="products-grid">
           <app-product-card
-            *ngFor="let product of products; trackBy: trackById" [product]="product" (productClick)="openProductDetails($event)">
+            *ngFor="let product of products; trackBy: trackById"
+            [product]="product"
+            [isSelected]="isProductSelected(product.id!)"
+            [isDeleteMode]="isDeleteMode"
+            (productClick)="handleProductClick($event)">
           </app-product-card>
         </section>
       </ng-container>
@@ -166,10 +188,13 @@
     </div>
 
     <div class="sidebar-center">
-      <button class="action-icon" (click)="openCreateProduct()">
+      <button *ngIf="!isDeleteMode" class="action-icon" (click)="openCreateProduct()">
         <span class="material-symbols-rounded">add</span>
       </button>
-      <button class="action-icon">
+      <button *ngIf="isDeleteMode" class="action-icon close-delete-btn" (click)="toggleDeleteMode()">
+        <span class="material-symbols-rounded">close</span>
+      </button>
+      <button class="action-icon" (click)="toggleDeleteMode()">
         <span class="material-symbols-rounded">remove</span>
       </button>
     </div>
@@ -181,7 +206,6 @@
     </div>
 
   </aside>
-
 </div>
 
 <app-product-modal
@@ -206,6 +230,7 @@
   (deleteProductClick)="deleteProduct()"
   (removeImage)="removeImage()"
   (imageSelected)="onImageSelected($event)"
+  [imageError]="imageError"
 ></app-product-modal>
 
 <app-delete-confirm-modal
@@ -225,3 +250,16 @@
   (confirm)="confirmExit()"
   (cancel)="cancelExit()"
 ></app-delete-confirm-modal>
+
+<app-delete-confirm-modal
+  [isOpen]="showBulkDeleteConfirm"
+  [title]="'Delete products'"
+  [message]="'These products will be permanently removed. Are you sure?'"
+  [confirmText]="'Delete'"
+  (confirm)="confirmBulkDelete()"
+  (cancel)="cancelBulkDelete()"
+></app-delete-confirm-modal>
+
+<div class="success-toast" *ngIf="showDeleteSuccess">
+  Products removed successfully!
+</div>

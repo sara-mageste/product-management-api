@@ -13,6 +13,8 @@ export class ProductCardComponent {
 
   @Input() product!: Product;
   @Output() productClick = new EventEmitter<Product>();
+  @Input() isSelected = false;
+  @Input() isDeleteMode = false;
 
   onClick() {
     this.productClick.emit(this.product);

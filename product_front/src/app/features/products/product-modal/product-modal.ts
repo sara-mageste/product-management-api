@@ -20,6 +20,7 @@ export class ProductModalComponent {
   @Input() isEditMode = false;
   @Input() triedSave = false;
   @Input() mode: 'view' | 'edit' | 'create' = 'view';
+  @Input() imageError = '';
   @Input() showDiscountInfo = false;
   @Input() isCategoryOpen = false;
   @Output() enableEdit = new EventEmitter<void>();
@@ -37,5 +38,17 @@ export class ProductModalComponent {
 
   ProductStatus = ProductStatus;
   ProductCategory = ProductCategory;
+
+  
+  isCodeInvalid(): boolean {
+
+    const code = this.editableProduct?.code;
+
+    if (!code) return false;
+
+    const regex = /^\d{8,20}$/;
+
+    return !regex.test(code);
+  }
 
 }

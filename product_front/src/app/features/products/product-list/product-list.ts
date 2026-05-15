@@ -39,7 +39,10 @@ export class ProductListComponent implements OnInit {
   totalPages = 0;
 
   ignoreBlur = false;
+
   showExitConfirm = false;
+  showBulkDeleteConfirm = false;
+  showDeleteSuccess = false;
 
   @ViewChild('searchContainer') searchContainer!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
@@ -65,6 +68,7 @@ export class ProductListComponent implements OnInit {
   
   //Click Outside Global
   @HostListener('document:click', ['$event'])
+  
   handleClickOutSide(event: MouseEvent): void{
     
     const target = event.target as HTMLElement;
@@ -235,6 +239,10 @@ export class ProductListComponent implements OnInit {
   mode: 'view' | 'edit' | 'create' = 'view';
   showDeleteConfirm = false;
   showDiscountInfo = false;
+  imageError = '';
+
+  isDeleteMode = false;
+  selectedProducts: number[] = [];
 
   selectedProduct: Product | null = null;
   editableProduct: Product | null = null;
@@ -256,9 +264,13 @@ export class ProductListComponent implements OnInit {
     this.isEditMode = true;
     this.mode = 'create';
     this.triedSave = false;
+    this.imageError = '';
   }
   
   openProductDetails(product: Product){
+
+    this.imageError = '';
+
     this.productService.getProductById(product.id!).subscribe({
       next: (response) => {
         this.selectedProduct = response;
@@ -294,11 +306,20 @@ export class ProductListComponent implements OnInit {
     return false;
   }
 
-  
-
   enableEdit() {
     this.isEditMode = true;
     this.mode = 'edit';
+  }
+
+  isCodeInvalid(): boolean {
+
+    const code = this.editableProduct?.code;
+
+    if (!code) return false;
+
+    const regex = /^\d{8,20}$/;
+
+    return !regex.test(code);
   }
 
   toggleStatus(event:any) {
@@ -332,6 +353,7 @@ export class ProductListComponent implements OnInit {
     if (
       !this.editableProduct.name ||
       !this.editableProduct.code ||
+      this.isCodeInvalid() ||
       !this.editableProduct.price ||
       !this.editableProduct.category ||
       !this.editableProduct.quantity
@@ -378,6 +400,7 @@ export class ProductListComponent implements OnInit {
     this.editableProduct = null;
     this.triedSave = false;
     this.mode = 'view';
+    this.imageError = '';
   }
 
   handleCloseAttempt(){
@@ -420,25 +443,99 @@ export class ProductListComponent implements OnInit {
     this.showDeleteConfirm = false;
   }
 
+  toggleDeleteMode() {
+
+    this.isDeleteMode = !this.isDeleteMode;
+
+    if (!this.isDeleteMode) {
+      this.selectedProducts = [];
+    }
+
+  }
+
+  toggleProductSelection(product: Product) {
+
+    if (!product.id) return;
+
+    const index = this.selectedProducts.indexOf(product.id);
+
+    if (index > -1) {
+      this.selectedProducts.splice(index, 1);
+    } else {
+      this.selectedProducts.push(product.id);
+    }
+
+  }
+
+  isProductSelected(productId: number): boolean {
+    return this.selectedProducts.includes(productId);
+  }
+
+  handleProductClick(product: Product) {
+
+    if (this.isDeleteMode) {
+      this.toggleProductSelection(product);
+      return;
+    }
+    this.openProductDetails(product);
+  }
+
+  deleteSelectedProducts() {
+
+    if (this.selectedProducts.length === 0) return;
+    this.showBulkDeleteConfirm = true;
+  }
+
+  confirmBulkDelete() {
+
+    this.productService.deleteProducts(this.selectedProducts)
+      .subscribe({
+
+        next: () => {
+          this.showBulkDeleteConfirm = false;
+          this.selectedProducts = [];
+          this.isDeleteMode = false;
+          this.loadProductsWithFilters();
+          this.showDeleteSuccess = true;
+          setTimeout(() => {
+            this.showDeleteSuccess = false;
+          }, 4000);
+
+        },
+        error: (err) => {
+          console.error('Error deleting products', err);
+          alert(err.error?.message || 'Error deleting products');
+        }
+      });
+  }
+
+  cancelBulkDelete() {
+    this.showBulkDeleteConfirm = false;
+  }
+
   // Image Update
   selectedImageFile: File | null = null;
 
   onImageSelected(event: Event) {
+
+    this.imageError = '';
+    
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
 
     if (!file || !this.editableProduct) return;
 
     if (!file.type.startsWith('image/')) {
-      console.error("Selected file is not an image!");
+      this.imageError = 'Selected file must be an image.';
       return;
     }
 
     if (file.size > 5_000_000) { // 5MB
-      console.error("File too large! Max 5MB.");
+      this.imageError = 'Image must be smaller than 5MB.';
       return;
     }
 
+    this.imageError = '';
     this.selectedImageFile = file;
 
     const reader = new FileReader;

@@ -73,6 +73,11 @@
     'opsz' 24;
 }
 
+.action-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Messages */
 .products-content p {
   color: black;
@@ -180,7 +185,7 @@ input[type="checkbox"] {
   width: 16px;
   height: 16px;
 
-  border: 1px solid #6f6d5c;
+  border: 1px solid #787662;
   background-color: #eaeae1;
 
   border-radius: 3px;
@@ -217,4 +222,104 @@ hr {
   letter-spacing: 1px;
   cursor: pointer;
   color: #787662;
+}
+
+/* Delete Tollbar */
+.delete-toolbar {
+  background-color: #eaeae1;
+  border-radius: 100px;
+  padding: 14px 20px;
+  margin-bottom: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.delete-message {
+  font-size: 14px;
+  font-weight: 600;
+  color: #787662;
+  letter-spacing: 0.5px;
+}
+
+.delete-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.selected-count {
+  font-size: 14px;
+  font-weight: 600;
+  color: #787662;
+}
+
+.delete-products-btn {
+  padding: 10px 16px;
+
+  border: none;
+  border-radius: 100px;
+
+  background-color: #b6463a;
+  color: #eaeae1;
+
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+.delete-products-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.close-delete-btn {
+  background-color: #b6463a;
+  color: #eaeae1;
+}
+
+.success-toast {
+  position: fixed;
+
+  bottom: 24px;
+  left: 24px;
+
+  padding: 14px 20px;
+
+  background-color: #2d8a4d;
+  color: #eaeae1;
+
+  border-radius: 100px;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  z-index: 999;
+
+  animation: fadeInOut 4s ease forwards;
+}
+
+@keyframes fadeInOut {
+
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  85% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
 }

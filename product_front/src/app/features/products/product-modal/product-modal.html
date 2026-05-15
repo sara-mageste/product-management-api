@@ -33,11 +33,11 @@
             type="text"
             [ngModel]="editableProduct?.code"
             (ngModelChange)="editableProduct!.code = $event"
-            [class.input-error]="triedSave && !editableProduct?.code"
+            [class.input-error]="triedSave && isCodeInvalid()"
             [disabled]="!isEditMode"/>
 
             <span class="error-message" *ngIf="triedSave && !editableProduct?.code"> This field is required! </span>
-
+            <span class="error-message" *ngIf="triedSave && editableProduct?.code && isCodeInvalid()"> Code must contain only numbers (8-20 digits) </span>
           </div>
 
           <!-- PRICE / DISCOUNT -->
@@ -171,6 +171,10 @@
 
           <input #fileInput type="file" accept="image/*" (change)="imageSelected.emit($event)" hidden>
 
+          <span class="error-message" *ngIf="imageError">
+          {{ imageError }}
+          </span>
+          
           <button class="upload-btn" (click)="fileInput.click()">
             <span class="material-symbols-rounded">upload</span>
               Upload Files
