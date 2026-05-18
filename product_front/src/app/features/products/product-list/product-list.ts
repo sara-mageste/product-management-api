@@ -12,10 +12,20 @@ import { ProductCategory } from '../enums/product-category.enum';
 import { ProductModalComponent } from '../product-modal/product-modal';
 import { DeleteConfirmModalComponent } from '../product-delete-modal/product-delete-modal';
 
+import { SideMenuComponent } from '../side-menu/side-menu';
+
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCardComponent, ProductModalComponent, DeleteConfirmModalComponent],
+  
+  imports: [
+    CommonModule, 
+    FormsModule, 
+    ProductCardComponent, 
+    ProductModalComponent, 
+    DeleteConfirmModalComponent, 
+    SideMenuComponent],
+
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
@@ -591,4 +601,17 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  // Side Menu
+
+  isMenuOpen = false;
+
+  toggleMenu() {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
+
+  userProfile = {
+    name: 'Sara Mageste',
+    employeeCode: 'EMP-2026',
+    imageUrl: '/images/profile.png'
+  };
 }

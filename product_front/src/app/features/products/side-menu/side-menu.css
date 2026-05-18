@@ -1,0 +1,156 @@
+/* SIDE MENU OVERLAY */
+.side-menu-overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100vh;
+  background-color: #eaeae1;
+
+  overflow: hidden;
+  transition: width 0.3s ease;
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15)
+}
+
+/* OPEN */
+.side-menu-overlay.open {
+  width: 320px;
+}
+
+/* CONTENT */
+.side-menu-content {
+  width: 320px;
+  height: 100%;
+
+  padding: 32px 24px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* PROFILE */
+.profile-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.profile-info h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #787662;
+}
+
+.profile-info span {
+  font-size: 18px;
+  color: #787662;
+}
+
+.profile-image {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid #787662;
+
+  object-fit: cover;
+}
+
+/* BUTTONS */
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 48px;
+}
+
+.menu-btn {
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid #787662;
+  background: transparent;
+  font-size: 16px;
+
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.menu-btn:hover {
+  background-color: #eaeae1;
+}
+
+.menu-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* LOGOUT */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  margin-top: auto;
+  width: 120px;
+  height: 30px;
+  border: none;
+
+  color: #787662;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.logout-btn .material-symbols-rounded {
+  font-size: 30px;
+}
+
+.logout-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.logout-btn:hover .logout-badge {
+  opacity: 1;
+}
+
+/* Badge wrapper */
+.menu-btn,
+.logout-btn {
+  position: relative;
+}
+
+/* Coming soon badge */
+.coming-soon-badge {
+  position: absolute;
+
+  right: -10px;
+  top: 50%;
+
+  transform: translateY(-50%) translateX(10px);
+
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #787662;
+  color: #eaeae1;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* SHOW ON HOVER */
+.menu-btn:hover .coming-soon-badge,
+.logout-btn:hover .coming-soon-badge {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
+}

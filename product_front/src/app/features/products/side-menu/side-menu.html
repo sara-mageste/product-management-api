@@ -1,0 +1,47 @@
+<div #menuContainer class="side-menu-overlay" [class.open]="isOpen">
+
+  <div class="side-menu-content">
+
+    <!-- PROFILE -->
+    <div class="profile-section">
+
+      <div class="profile-info">
+        <h2>{{ userProfile.name }}</h2>
+        <span>{{ userProfile.employeeCode }}</span>
+      </div>
+
+      <img
+        [src]="userProfile.imageUrl"
+        class="profile-image"
+      />
+
+    </div>
+
+    <!-- BUTTONS -->
+    <div class="menu-buttons">
+
+      <button class="menu-btn disabled">
+        Notifications
+        <span class="coming-soon-badge">Coming soon</span>
+      </button>
+
+      <button class="menu-btn disabled">
+        Promotions
+        <span class="coming-soon-badge">Coming soon</span>
+      </button>
+
+      <button class="menu-btn">
+        About
+      </button>
+
+    </div>
+
+    <!-- LOGOUT -->
+    <button class="logout-btn disabled">
+      <span class="material-symbols-rounded">logout</span>
+      <span class="coming-soon-badge">Coming soon</span>
+    </button>
+
+  </div>
+
+</div>

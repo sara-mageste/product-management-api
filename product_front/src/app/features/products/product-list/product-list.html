@@ -182,7 +182,7 @@
   <aside class="sidebar right">
 
     <div class="sidebar-top">
-      <button class="action-icon">
+      <button class="action-icon" (click)="toggleMenu()">
         <span class="material-symbols-rounded">menu</span>
       </button>
     </div>
@@ -206,6 +206,13 @@
     </div>
 
   </aside>
+
+  <app-side-menu
+    [isOpen]="isMenuOpen"
+    [userProfile]="userProfile"
+    (closeMenu)="isMenuOpen = false">
+  </app-side-menu>
+  
 </div>
 
 <app-product-modal
