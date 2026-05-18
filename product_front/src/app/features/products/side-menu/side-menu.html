@@ -30,7 +30,7 @@
         <span class="coming-soon-badge">Coming soon</span>
       </button>
 
-      <button class="menu-btn">
+      <button class="menu-btn" (click)="toggleAbout()">
         About
       </button>
 
@@ -45,3 +45,8 @@
   </div>
 
 </div>
+
+<app-about-me
+  [isOpen]="isAboutOpen"
+  (close)="isAboutOpen = false">
+</app-about-me>

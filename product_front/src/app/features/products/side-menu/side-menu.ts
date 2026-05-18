@@ -1,11 +1,14 @@
 import { Component, Input, ElementRef, ViewChild, HostListener } from '@angular/core';
 import { Output, EventEmitter } from '@angular/core';
+import { AboutMeComponent } from '../about-me/about-me';
 
 
 @Component({
   selector: 'app-side-menu',
   templateUrl: './side-menu.html',
-  styleUrls: ['./side-menu.css']
+  styleUrls: ['./side-menu.css'],
+  standalone: true,
+  imports: [AboutMeComponent]
 })
 
 export class SideMenuComponent {
@@ -33,6 +36,20 @@ export class SideMenuComponent {
             this.closeMenu.emit();
         }
     }
+
+    // About
+
+    isAboutOpen = false;
+
+    toggleAbout() {
+        this.isAboutOpen = !this.isAboutOpen;
+    }
+
+    aboutMe = {
+    name: 'Sara Mageste',
+    employeeCode: 'EMP-2026',
+    imageUrl: '/images/profile.png'
+  };
         
 
 }

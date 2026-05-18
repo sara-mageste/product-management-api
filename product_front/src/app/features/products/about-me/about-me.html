@@ -1,0 +1,14 @@
+<div class="about-modal-overlay" *ngIf="isOpen" (click)="close.emit()">
+
+  <div class="about-modal" (click)="$event.stopPropagation()">
+
+    <button class="close-btn" (click)="close.emit()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+
+    <h3>{{ title }}</h3>
+    <p>{{ message }}</p>
+
+  </div>
+
+</div>

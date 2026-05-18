@@ -87,7 +87,6 @@ export class ProductListComponent implements OnInit {
       return;
     }
 
-    //Search
     if (
       this.isSearchOpen &&
       !this.searchContainer?.nativeElement.contains(target)
@@ -95,7 +94,6 @@ export class ProductListComponent implements OnInit {
       this.isSearchOpen = false;
     }
 
-    //Filter
     if (
       this.isFilterOpen &&
       !this.filterContainer?.nativeElement.contains(target)
