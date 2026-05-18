@@ -226,6 +226,12 @@ hr {
 
 /* Delete Tollbar */
 .delete-toolbar {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+
   background-color: #eaeae1;
   border-radius: 100px;
   padding: 14px 20px;
@@ -234,6 +240,9 @@ hr {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 24px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
 .delete-message {
