@@ -1,10 +1,11 @@
 package com.saraprojects.product_api.service;
 
-import com.saraprojects.product_api.domain.enums.ProductCategory;
-import com.saraprojects.product_api.domain.enums.ProductStatus;
+import com.saraprojects.product_api.enums.ProductCategory;
+import com.saraprojects.product_api.enums.ProductStatus;
 import com.saraprojects.product_api.dto.ProductDTO;
 import com.saraprojects.product_api.model.Product;
 import com.saraprojects.product_api.repository.ProductRepository;
+import com.saraprojects.product_api.service.NotificationService;
 import com.saraprojects.product_api.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final NotificationService notificationService;
 
     private Pageable buildPageable (int page, int size, String sortBy){
         try{
@@ -93,6 +95,10 @@ public class ProductService {
         Product product = dto.toEntity();
         Product saved = repository.save(product);
 
+        if (saved.getQuantity() < 10) {
+            notificationService.createLowStockNotification(saved);
+        }
+
         return new ProductDTO(saved);
     }
 
@@ -115,6 +121,10 @@ public class ProductService {
         existing.setCode(dto.getCode());
 
         Product updated = repository.save(existing);
+
+        if (updated.getQuantity() < 10) {
+            notificationService.createLowStockNotification(updated);
+        }
 
         return new ProductDTO(updated);
     }

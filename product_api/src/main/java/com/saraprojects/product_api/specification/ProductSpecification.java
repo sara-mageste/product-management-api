@@ -1,7 +1,7 @@
 package com.saraprojects.product_api.specification;
 
-import com.saraprojects.product_api.domain.enums.ProductCategory;
-import com.saraprojects.product_api.domain.enums.ProductStatus;
+import com.saraprojects.product_api.enums.ProductCategory;
+import com.saraprojects.product_api.enums.ProductStatus;
 import com.saraprojects.product_api.model.Product;
 import org.springframework.data.jpa.domain.Specification;
 

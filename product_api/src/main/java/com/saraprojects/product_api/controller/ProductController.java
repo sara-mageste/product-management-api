@@ -1,7 +1,7 @@
 package com.saraprojects.product_api.controller;
 
-import com.saraprojects.product_api.domain.enums.ProductCategory;
-import com.saraprojects.product_api.domain.enums.ProductStatus;
+import com.saraprojects.product_api.enums.ProductCategory;
+import com.saraprojects.product_api.enums.ProductStatus;
 import com.saraprojects.product_api.dto.ProductDTO;
 import com.saraprojects.product_api.service.ProductService;
 import jakarta.validation.Valid;

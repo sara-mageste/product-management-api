@@ -2,8 +2,8 @@ package com.saraprojects.product_api.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import com.saraprojects.product_api.domain.enums.ProductCategory;
-import com.saraprojects.product_api.domain.enums.ProductStatus;
+import com.saraprojects.product_api.enums.ProductCategory;
+import com.saraprojects.product_api.enums.ProductStatus;
 
 @Entity
 @Table(name = "products")

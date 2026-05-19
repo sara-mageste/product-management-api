@@ -1,4 +1,4 @@
-package com.saraprojects.product_api.domain.enums;
+package com.saraprojects.product_api.enums;
 
 public enum ProductStatus {
     ACTIVE,
