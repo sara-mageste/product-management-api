@@ -20,10 +20,15 @@
     <!-- BUTTONS -->
     <div class="menu-buttons">
 
-      <button class="menu-btn disabled">
+      <button class="menu-btn" (click)="toggleNotifications()">
         Notifications
-        <span class="coming-soon-badge">Coming soon</span>
+        <div class="notification-dot menu-notification-dot" *ngIf="hasUnreadNotifications"></div>
       </button>
+
+      <app-notifications-popup
+        [isOpen]="isNotificationsOpen"
+        (close)="isNotificationsOpen = false">
+      </app-notifications-popup>
 
       <button class="menu-btn disabled">
         Promotions

@@ -1,18 +1,22 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core'; 
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
+import { Subscription } from 'rxjs';
 
 import { Product } from '../models/product.model'; 
-import { ProductCardComponent } from '../product-card/product-card'; 
-import { ProductService } from '../service/product.service'; 
+import { Notification } from '../models/notification.model';
 
 import { ProductStatus } from '../enums/product-status.enum'; 
 import { ProductCategory } from '../enums/product-category.enum';
 
+import { ProductService } from '../service/product.service';
+import { NotificationService } from '../service/notification.service';
+
+import { ProductCardComponent } from '../product-card/product-card'; 
 import { ProductModalComponent } from '../product-modal/product-modal';
 import { DeleteConfirmModalComponent } from '../product-delete-modal/product-delete-modal';
-
 import { SideMenuComponent } from '../side-menu/side-menu';
+
 
 @Component({
   selector: 'app-product-list',
@@ -24,36 +28,83 @@ import { SideMenuComponent } from '../side-menu/side-menu';
     ProductCardComponent, 
     ProductModalComponent, 
     DeleteConfirmModalComponent, 
-    SideMenuComponent],
+    SideMenuComponent
+  ],
 
   templateUrl: './product-list.html',
   styleUrl: './product-list.css',
 })
 
-export class ProductListComponent implements OnInit {
+export class ProductListComponent implements OnInit, OnDestroy {
 
+  // Product
   products: Product[] = [];
 
   loading = true;
   errorMessage = '';
 
-  searchTerm = '';
-  isSearchOpen = false; 
-  isFilterOpen = false;
-
   ProductCategory = ProductCategory;
   ProductStatus = ProductStatus;
 
+  // Pagination
   currentPage = 0;
   pageSize = 8;
   totalPages = 0;
 
-  ignoreBlur = false;
+  // Search
+  searchTerm = '';
+  isSearchOpen = false; 
+
+  // Filter
+  isFilterOpen = false;
+  isCategoryOpen = false;
+
+  filters = {
+    sortBy: null as string | null,
+    status: null as ProductStatus | null,
+    categories: [] as ProductCategory[],
+    pageSize: null as number | null
+  };
+
+  // Modals
+  isDetailsOpen = false;
+  isEditMode = false;
+  triedSave = false;
+
+  mode: 'view' | 'edit' | 'create' = 'view';
 
   showExitConfirm = false;
+  showDeleteConfirm = false;
   showBulkDeleteConfirm = false;
   showDeleteSuccess = false;
+  showDiscountInfo = false;
 
+  // Product State
+  selectedProduct: Product | null = null;
+  editableProduct: Product | null = null;
+
+  // Delete Mode
+  isDeleteMode = false;
+  selectedProducts: number[] = [];
+
+  // Image
+  imageError = '';
+  selectedImageFile: File | null = null;
+
+  // Side Menu
+  isMenuOpen = false;
+
+  userProfile = {
+    name: 'Sara Mageste',
+    employeeCode: 'EMP-2026',
+    imageUrl: '/images/profile.png'
+  };
+
+  // Notifications
+  hasUnreadNotifications = false;
+  private notificationsSubscription?: Subscription;
+  
+  // ViewChild
   @ViewChild('searchContainer') searchContainer!: ElementRef;
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
   @ViewChild('filterContainer') filterContainer!: ElementRef;
@@ -61,21 +112,27 @@ export class ProductListComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cdr: ChangeDetectorRef,
+    private notificationService: NotificationService,
   ) {}
 
+  // Lifecycle
   ngOnInit(): void {
     this.loadProducts(0);
+    this.checkUnreadNotifications();
+
+    this.notificationsSubscription =
+    this.notificationService.notificationsUpdated$
+      .subscribe(() => {
+
+        this.checkUnreadNotifications();
+
+      });
   }
 
-  loadProducts(page: number = 0 ): void {
-    this.currentPage = page;
-    this.loadProductsWithFilters();
+  ngOnDestroy(): void {
+    this.notificationsSubscription?.unsubscribe();
   }
 
-  trackById(index: number, product: Product): number {
-    return product.id!;
-  }
-  
   //Click Outside Global
   @HostListener('document:click', ['$event'])
   
@@ -103,8 +160,11 @@ export class ProductListComponent implements OnInit {
 
   }
 
-  //SEARCH
-  
+  trackById(index: number, product: Product): number {
+    return product.id!;
+  }
+
+  //Search
   toggleSearch() : void{
     this.isSearchOpen = !this.isSearchOpen;
 
@@ -120,19 +180,14 @@ export class ProductListComponent implements OnInit {
     this.loadProductsWithFilters();
   }
 
-  //FILTER
-
+  //Filter
   toggleFilter(): void{
     this.isFilterOpen = !this.isFilterOpen;
   }
 
-  /* SORT BY */
-  filters = {
-    sortBy: null as string | null,
-    status: null as ProductStatus | null,
-    categories: [] as ProductCategory[],
-    pageSize: null as number | null
-  };
+  toggleCategoryDropdown(){
+    this.isCategoryOpen = !this.isCategoryOpen
+  }
 
   setSortBy (sortBy: string){
     this.filters.sortBy = this.filters.sortBy === sortBy ? null : sortBy;
@@ -163,12 +218,6 @@ export class ProductListComponent implements OnInit {
     this.loadProductsWithFilters();
   }
 
-  isCategoryOpen = false;
-
-  toggleCategoryDropdown(){
-    this.isCategoryOpen = !this.isCategoryOpen
-  }
-
   selectCategory(category: ProductCategory) {
     if (!this.editableProduct) return;
 
@@ -196,6 +245,10 @@ export class ProductListComponent implements OnInit {
   }
 
   //API CALL
+  loadProducts(page: number = 0 ): void {
+    this.currentPage = page;
+    this.loadProductsWithFilters();
+  }
 
   loadProductsWithFilters(): void {
     this.loading = true;
@@ -239,22 +292,22 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  //PopUp Product
+  //Side Menu
+  toggleMenu(): void {
+    this.isMenuOpen = !this.isMenuOpen;
+  }
 
-  isDetailsOpen = false;
-  isEditMode = false;
-  triedSave = false;
-  mode: 'view' | 'edit' | 'create' = 'view';
-  showDeleteConfirm = false;
-  showDiscountInfo = false;
-  imageError = '';
+  //Notifications
+  checkUnreadNotifications() {
+    this.notificationService.getNotifications().subscribe({
+      next: (notifications: Notification[]) => {
+        this.hasUnreadNotifications =
+          notifications.some((notification: Notification) => !notification.read);
+      }
+    });
+  }
 
-  isDeleteMode = false;
-  selectedProducts: number[] = [];
-
-  selectedProduct: Product | null = null;
-  editableProduct: Product | null = null;
-  
+  //Product Popup
   openCreateProduct() {
     this.editableProduct = {
       name: '',
@@ -289,9 +342,52 @@ export class ProductListComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
-
   }
 
+  enableEdit() {
+    this.isEditMode = true;
+    this.mode = 'edit';
+  }
+
+  cancelEdit() {
+    if (!this.selectedProduct) return;
+
+    this.editableProduct = {
+      ...this.selectedProduct
+    };
+
+    this.isEditMode = false;
+  }
+
+  closeDetails(){
+    this.isDetailsOpen = false;
+    this.selectedProduct = null;
+    this.editableProduct = null;
+    this.triedSave = false;
+    this.mode = 'view';
+    this.imageError = '';
+  }
+
+  handleCloseAttempt(){
+
+    if (this.hasUnsavedChanges()) {
+      this.showExitConfirm = true;
+      return;
+    }
+
+    this.closeDetails();
+  }
+
+  confirmExit() {
+  this.showExitConfirm = false;
+  this.closeDetails();
+  }
+
+  cancelExit() {
+    this.showExitConfirm = false;
+  }
+
+  //Validations
   hasUnsavedChanges(): boolean {
     if (!this.editableProduct) return false;
 
@@ -312,11 +408,6 @@ export class ProductListComponent implements OnInit {
     }
 
     return false;
-  }
-
-  enableEdit() {
-    this.isEditMode = true;
-    this.mode = 'edit';
   }
 
   isCodeInvalid(): boolean {
@@ -342,16 +433,7 @@ export class ProductListComponent implements OnInit {
     }
   }
 
-  cancelEdit() {
-    if (!this.selectedProduct) return;
-
-    this.editableProduct = {
-      ...this.selectedProduct
-    };
-
-    this.isEditMode = false;
-  }
-
+  //Save Product
   saveChanges() {
     if(!this.editableProduct) return;
 
@@ -383,6 +465,7 @@ export class ProductListComponent implements OnInit {
           this.triedSave = false;
           this.closeDetails();
           this.loadProductsWithFilters();
+          this.notificationService.notifyNotificationsUpdated();
         }
       });
     } else {
@@ -393,44 +476,18 @@ export class ProductListComponent implements OnInit {
           this.isEditMode = false;
           this.triedSave = false;
           this.loadProductsWithFilters();
+          this.notificationService.notifyNotificationsUpdated();
         }
       });
     }
   }
 
+  //Discount
   toggleDiscountInfo(){
     this.showDiscountInfo = !this.showDiscountInfo;
   }
 
-  closeDetails(){
-    this.isDetailsOpen = false;
-    this.selectedProduct = null;
-    this.editableProduct = null;
-    this.triedSave = false;
-    this.mode = 'view';
-    this.imageError = '';
-  }
-
-  handleCloseAttempt(){
-
-    if (this.hasUnsavedChanges()) {
-      this.showExitConfirm = true;
-      return;
-    }
-
-    this.closeDetails();
-  }
-
-  confirmExit() {
-  this.showExitConfirm = false;
-  this.closeDetails();
-  }
-
-  cancelExit() {
-    this.showExitConfirm = false;
-  }
-
-  // Delete Product
+  // Delete
   deleteProduct() {
     this.showDeleteConfirm = true;
   }
@@ -452,7 +509,6 @@ export class ProductListComponent implements OnInit {
   }
 
   toggleDeleteMode() {
-
     this.isDeleteMode = !this.isDeleteMode;
 
     if (!this.isDeleteMode) {
@@ -495,10 +551,7 @@ export class ProductListComponent implements OnInit {
   }
 
   confirmBulkDelete() {
-
-    this.productService.deleteProducts(this.selectedProducts)
-      .subscribe({
-
+    this.productService.deleteProducts(this.selectedProducts).subscribe({
         next: () => {
           this.showBulkDeleteConfirm = false;
           this.selectedProducts = [];
@@ -508,7 +561,6 @@ export class ProductListComponent implements OnInit {
           setTimeout(() => {
             this.showDeleteSuccess = false;
           }, 4000);
-
         },
         error: (err) => {
           console.error('Error deleting products', err);
@@ -521,9 +573,7 @@ export class ProductListComponent implements OnInit {
     this.showBulkDeleteConfirm = false;
   }
 
-  // Image Update
-  selectedImageFile: File | null = null;
-
+  // Image
   onImageSelected(event: Event) {
 
     this.imageError = '';
@@ -599,17 +649,4 @@ export class ProductListComponent implements OnInit {
     });
   }
 
-  // Side Menu
-
-  isMenuOpen = false;
-
-  toggleMenu() {
-    this.isMenuOpen = !this.isMenuOpen;
-  }
-
-  userProfile = {
-    name: 'Sara Mageste',
-    employeeCode: 'EMP-2026',
-    imageUrl: '/images/profile.png'
-  };
 }

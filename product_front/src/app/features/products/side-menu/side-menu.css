@@ -1,4 +1,3 @@
-/* SIDE MENU OVERLAY */
 .side-menu-overlay {
   position: fixed;
   top: 0;
@@ -13,12 +12,12 @@
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15)
 }
 
-/* OPEN */
+/* Open */
 .side-menu-overlay.open {
   width: 320px;
 }
 
-/* CONTENT */
+/* Content */
 .side-menu-content {
   width: 320px;
   height: 100%;
@@ -30,7 +29,7 @@
   flex-direction: column;
 }
 
-/* PROFILE */
+/* Profile */
 .profile-section {
   display: flex;
   justify-content: space-between;
@@ -59,7 +58,7 @@
   object-fit: cover;
 }
 
-/* BUTTONS */
+/* Buttons */
 .menu-buttons {
   display: flex;
   flex-direction: column;
@@ -87,7 +86,7 @@
   cursor: not-allowed;
 }
 
-/* LOGOUT */
+/* Logout */
 .logout-btn {
   display: flex;
   align-items: center;
@@ -148,9 +147,27 @@
     transform 0.2s ease;
 }
 
-/* SHOW ON HOVER */
+/* Show On Hover */
 .menu-btn:hover .coming-soon-badge,
 .logout-btn:hover .coming-soon-badge {
   opacity: 1;
   transform: translateY(-50%) translateX(0);
+}
+
+/* Base Dot */
+.notification-dot {
+  position: absolute;
+
+  width: 10px;
+  height: 10px;
+
+  border-radius: 50%;
+  background-color: #a7382a;
+}
+
+.menu-notification-dot {
+  top: 50%;
+  right: 16px;
+
+  transform: translateY(-50%);
 }

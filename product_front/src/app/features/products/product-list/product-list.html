@@ -184,6 +184,7 @@
     <div class="sidebar-top">
       <button class="action-icon" (click)="toggleMenu()">
         <span class="material-symbols-rounded">menu</span>
+         <div class="menu-icon-dot" *ngIf="hasUnreadNotifications"></div>
       </button>
     </div>
 

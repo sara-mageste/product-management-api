@@ -1,0 +1,35 @@
+<div class="notifications-popup-overlay" *ngIf="isOpen" (click)="close.emit()">
+
+    <div class="notifications-popup" (click)="$event.stopPropagation()">
+
+    <div class="notifications-header">
+
+        <h2>Notifications</h2>
+
+        <button class="notification-toggle" [class.active]="notificationsEnabled" (click)="toggleNotificationsEnabled()">
+            <div class="toggle-ball" [class.active]="notificationsEnabled"></div>
+        </button>
+
+    </div>
+
+    <div class="notifications-list">
+
+        <div class="notification-card" *ngFor="let notification of notifications" [class.read]="notification.read" (click)="markAsRead(notification)">
+
+            <div class="notification-content">
+
+                <h4> {{ notification.title }} </h4>
+                <p> {{ notification.message }} </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <button class="see-all-btn">
+        See all
+    </button>
+
+    </div>
+</div>
