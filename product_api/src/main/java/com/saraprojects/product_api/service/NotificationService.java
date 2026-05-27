@@ -17,6 +17,27 @@ public class NotificationService {
 
     public void createLowStockNotification(Product product) {
 
+        Notification existingNotification =
+                notificationRepository
+                        .findFirstByProductIdAndResolvedFalse(product.getId())
+                        .orElse(null);
+
+        if (existingNotification != null) {
+
+            existingNotification.setMessage(
+                    product.getName() +
+                            " has only " +
+                            product.getQuantity() +
+                            " units left in stock."
+            );
+
+            existingNotification.setRead(false);
+
+            notificationRepository.save(existingNotification);
+
+            return;
+        }
+
         Notification notification = new Notification();
 
         notification.setTitle("Low stock");
@@ -29,16 +50,43 @@ public class NotificationService {
         );
 
         notification.setType(NotificationType.LOW_STOCK);
-
         notification.setProductId(product.getId());
+        notification.setResolved(false);
+        notification.setRead(false);
 
         notificationRepository.save(notification);
+    }
+
+    public void resolveLowStockNotifications(Long productId) {
+
+        List<Notification> notifications = notificationRepository.findByProductIdAndResolvedFalse(productId);
+
+        notifications.forEach(notification -> {
+            notification.setResolved(true);
+        });
+
+        notificationRepository.saveAll(notifications);
     }
 
     public List<Notification> getAllNotifications() {
         return notificationRepository.findAll()
                 .stream()
+                .filter(notification -> !notification.isResolved())
                 .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
                 .toList();
+    }
+
+    public Notification  markAsRead(Long id) {
+
+        Notification notification = notificationRepository.findById(id).orElseThrow(() ->
+            new RuntimeException("Notification not found")
+        );
+
+        notification.setRead(true);
+        return notificationRepository.save(notification);
+    }
+
+    public long countUnreadNotifications() {
+        return notificationRepository.countByIsReadFalse();
     }
 }

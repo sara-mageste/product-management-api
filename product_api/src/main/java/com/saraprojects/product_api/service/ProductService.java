@@ -124,6 +124,8 @@ public class ProductService {
 
         if (updated.getQuantity() < 10) {
             notificationService.createLowStockNotification(updated);
+        } else {
+            notificationService.resolveLowStockNotifications(updated.getId());
         }
 
         return new ProductDTO(updated);
