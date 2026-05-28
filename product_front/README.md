@@ -2,7 +2,7 @@
 
 Frontend application developed with **Angular** to consume the **Product Management API**.
 
-This project simulates the interface of a real-world product management system, similar to those used in **inventory management, internal admin dashboards, and e-commerce product control panels**.
+The project simulates the interface of a real-world product management system, similar to those used in inventory management platforms, internal admin dashboards, and e-commerce product control panels.
 
 The project focuses on:
 * Scalable Angular architecture
@@ -14,29 +14,42 @@ The project focuses on:
 
 ## 🔍 Overview
 
-The application simulates a modern product management dashboard connected to a REST API.
+The application provides a complete frontend interface for product management operations, including:
 
-It was built using Angular with a feature-based architecture focused on scalability, reusable components, and maintainable code organization.
+* Product management operations
+* Dynamic pagination and sorting
+* Product search by name
+* Bulk product deletion
+* Notifications management
+* Low stock notifications
+* Product image support via URL
+* Side navigation menu
+* About/Profile section
+* Reusable modal components
 
-The frontend communicates with a Java Spring Boot backend and provides a modular structure for managing products, notifications, navigation, and future application features.
+The frontend was designed using a feature-based architecture, allowing easier scalability, maintenance, and integration with backend services.
+
+Additionally, the project communicates with a Java Spring Boot REST API, maintaining a decoupled architecture between frontend and backend layers.
 
 
 ## 🚀 Features
 
 * Product listing
-* Create products
-* Edit products
-* Delete products
-* Search products by name
-* Dynamic pagination
-* Product sorting
-* Notifications system
-* Reusable modal components
+* Product creation
+* Product editing
+* Product deletion
+* Bulk product deletion
+* Product search by name
+* Dynamic pagination and sorting
+* Notifications management
+* Low stock notification support
 * Side navigation menu
 * About/Profile section
-* REST API consumption
+* Reusable modal components
 * Loading state handling
 * Request error handling
+* REST API integration
+* Component-based architecture organization
 
 
 ## 🧱 Project Architecture
@@ -62,7 +75,7 @@ src/app
 ```
 
 
-* This architecture provides:
+This architecture provides:
 * Better feature isolation
 * Easier maintenance
 * Component reusability
@@ -78,6 +91,7 @@ Endpoints currently used include:
 * Product creation
 * Product editing
 * Product deletion
+* Bulk product deletion
 * Product search
 * Pagination and sorting
 * Notifications management
@@ -132,11 +146,11 @@ http://localhost:4200
 
 ## 📈 Next Steps (Future Improvements)
 
-🔐 Implement authentication and authorization on the frontend
-
 📍 Implement notification history
 
 📝 Implement promotions
+
+🔐 Implement authentication and authorization on the frontend
 
 🧪 Expand unit test coverage
 
