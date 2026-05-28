@@ -2,85 +2,85 @@
 
 Frontend application developed with **Angular** to consume the **Product Management API**.
 
-This project simulates the interface of a real-world product management system, similar to those used in **e-commerce admin panels, inventory control systems, or internal product catalogs**.
+This project simulates the interface of a real-world product management system, similar to those used in **inventory management, internal admin dashboards, and e-commerce product control panels**.
 
-The main focus of the frontend is:
-* Code organization
-* Modern Angular best practices
-* Efficient communication with REST APIs
-* User experience (UX)
-* Scalability and maintainability
+The project focuses on:
+* Scalable Angular architecture
+* Component reusability
+* REST API integration
+* Clean UI organization
+* Maintainability and code readability
 
 
 ## 🔍 Overview
 
-The application allows users to manage products through a web interface by consuming data from the backend via HTTP.
+The application simulates a modern product management dashboard connected to a REST API.
 
-Current features include:
-* Product listing
-* Product search by name
-* Pagination
-* Sorting
-* Image loading via URL
-* Loading and error states
-* Modular architecture organized by features
+It was built using Angular with a feature-based architecture focused on scalability, reusable components, and maintainable code organization.
 
-The frontend was designed to be decoupled from the backend, allowing easier evolution and maintenance.
+The frontend communicates with a Java Spring Boot backend and provides a modular structure for managing products, notifications, navigation, and future application features.
 
 
 ## 🚀 Features
 
 * Product listing
+* Create products
+* Edit products
+* Delete products
 * Search products by name
 * Dynamic pagination
-* Sorting
+* Product sorting
+* Notifications system
+* Reusable modal components
+* Side navigation menu
+* About/Profile section
 * REST API consumption
 * Loading state handling
 * Request error handling
-* Structure prepared for future authentication
 
 
 ## 🧱 Project Architecture
 
-The project follows a feature-based architecture, a recommended practice for scalable Angular applications.
+The project follows a feature-based architecture, organizing related files by business domain.
 
 ```
-src/app
-│
-├── core
-│ ├── services → Global services (API, future interceptors)
-│ └── models → Interfaces and data models
-│
-├── features
-│ └── products
-│ ├── components → Product components
-│ ├── pages → Pages (lists, forms)
-│ ├── service → Communication with the products API
-│ └── models → Feature-specific models
-│
-├── shared
-│ ├── components → Reusable components
-│ └── styles → Shared styles
-│
-└── app.component.ts
+src/app 
+│ 
+├── features/products 
+│ 
+├── about-me              → Profile/About section 
+├── enums                 → Application enums 
+├── models                → Interfaces and data models 
+├── notifications         → Notifications feature 
+├── product-card          → Product card component 
+├── product-delete-modal  → Delete confirmation modal 
+├── product-list          → Product listing 
+├── product-modal         → Create/Edit product modal 
+├── service               → API communication layer 
+└── side-menu             → Side navigation menu
 
 ```
 
 
-This approach ensures:
-* Clear separation of responsibilities
-* Easier scalability and evolution
-* More readable and testable code
+* This architecture provides:
+* Better feature isolation
+* Easier maintenance
+* Component reusability
+* Cleaner scalability for future modules
 
 
 ## 🔗 Backend Integration
 
 This frontend consumes the Product Management API, developed in Java with Spring Boot.
 
-Endpoints used include:
+Endpoints currently used include:
 * Product listing
-* Search by name
+* Product creation
+* Product editing
+* Product deletion
+* Product search
 * Pagination and sorting
+* Notifications management
 
 Backend base URL:
 
@@ -128,17 +128,17 @@ The application will be available at:
 ```
 http://localhost:4200
 ```
-⚠️ Make sure the backend is running for the application to work properly.
+⚠️ Make sure the backend is running before starting the frontend application.
 
 ## 📈 Next Steps (Future Improvements)
 
 🔐 Implement authentication and authorization on the frontend
 
-📝 Create product creation and editing forms
+📍 Implement notification history
+
+📝 Implement promotions
 
 🧪 Expand unit test coverage
-
-🎨 Improve UX/UI and responsiveness
 
 📦 Implement interceptors for global error handling and authentication tokens
 
