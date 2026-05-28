@@ -7,14 +7,14 @@ The project simulates a real backend used in corporate applications such as e-co
 
 The application provides REST endpoints for complete product CRUD operations, including:
 
-* Create
-* Read
-* Update
-* Delete
-* Pagination
-* Sorting
-* Search by name
+* Product management operations
+* Pagination and sorting
+* Search by name and code
 * Product image support via URL
+* Notifications management
+* Low stock notifications
+* Bulk product deletion
+* Dynamic filtering with specifications
 
 The API was designed with a decoupled architecture, allowing easy integration with frontend applications.
 Additionally, the project already includes an initial structure prepared for authentication and security, enabling future evolution without structural refactoring.
@@ -22,9 +22,14 @@ Additionally, the project already includes an initial structure prepared for aut
 ## 🚀 Features
 
 * Full product CRUD operations
+* Product search by name and code
 * Dynamic pagination and sorting
+* Dynamic filtering with JPA Specifications
+* Bulk product deletion
+* Notifications management
+* Low stock notification support
+* Unread notifications counting
 * Data validation using Bean Validation
-* Product search by name
 * Global exception handling
 * Standardized error responses
 * Clear separation of responsibilities by layer
@@ -39,10 +44,12 @@ src/main/java/com/saraprojects/product_api
 ├── config        → Configuration (Spring Security)
 ├── controller    → REST Controllers
 ├── dto           → Data Transfer Objects
+├── enums         → Application enums
 ├── exception     → Global exception handling
 ├── model         → JPA entities
 ├── repository    → Repositories (Spring Data JPA)
 ├── service       → Business logic
+├── specification → Dynamic query specifications
 └── ProductApiApplication.java
 ``` 
 This organization ensures:
@@ -67,13 +74,17 @@ This organization ensures:
 
 ## 📌 Endpoints
 ```
-POST   /api/products        → Create product
-GET    /api/products        → List all products
-GET    /api/products/paged  → List products with pagination
-GET    /api/products/search → Search products by name
-GET    /api/products/{id}   → Get product by ID
-PUT    /api/products/{id}   → Update product
-DELETE /api/products/{id}   → Delete product
+POST /api/products                    → Create product 
+PUT /api/products/id/{id}             → Update product 
+DELETE /api/products/id/{id}          → Delete product 
+DELETE /api/products/bulk-delete      → Delete selected products 
+GET /api/products/id/{id}             → Get product by ID 
+GET /api/products                     → Get products with search, filters, pagination and sorting 
+GET /api/products/all                 → Get all products 
+GET /notifications                    → Get notifications 
+PUT /notifications/{id}/read          → Mark notification as read 
+GET /notifications/unread/count       → Count unread notifications
+
 ```
 
 ## ✅ Data Validation
@@ -123,6 +134,14 @@ Sensitive files are ignored using .gitignore.
 
 ## ▶️ Running the Project
 
+### Prerequisites
+
+* Java 21
+* Maven
+* MySQL
+
+### Steps
+
 1. Clone the repository
 2. Configure the environment variables
 3. Create a MySQL database
@@ -137,14 +156,13 @@ http://localhost:8080
 
 ## 📈 Next Steps (Future Improvements)
 
+🔔 Improve notifications management
+
 🔐 Implement authentication and authorization using Spring Security + JWT
 
 🧪 Add unit and integration tests
 
 📄 Document the API using Swagger/OpenAPI
-
-🎨 Develop a frontend in Angular to consume the API (in progress)
-
 
 # 👩‍💻 Author
 
