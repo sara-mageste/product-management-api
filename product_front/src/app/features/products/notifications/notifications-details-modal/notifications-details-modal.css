@@ -1,0 +1,80 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.2);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  flex-direction: column;
+
+  z-index: 2000;
+}
+
+.notification-modal {
+  width: 340px;
+  background: #e8e5dc;
+  border-radius: 24px;
+  padding: 32px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.notification-modal h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #787662;
+}
+
+.notification-modal p {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #787662;
+}
+
+.go-product-btn {
+  background: none;
+  border: none;
+  text-align: left;
+  font-size: 15px;
+  text-decoration: underline;
+  color: #787662;
+  padding: 0;
+  cursor: pointer;
+
+  transition: opacity 0.2s ease;
+}
+
+.go-product-btn:hover {
+  opacity: 0.7;
+}
+
+/* Close button */
+.action-icon-close {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+
+  background-color: #787662;
+  color: #eaeae1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: 0.2s ease;
+}

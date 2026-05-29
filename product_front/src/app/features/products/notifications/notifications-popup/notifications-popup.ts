@@ -15,10 +15,10 @@ import { NotificationService } from '../../service/notification.service';
 export class NotificationsPopupComponent implements OnInit, OnDestroy {
 
   @Input() isOpen = false;
+  @Input() notifications: Notification[] = [];
+  @Input() notificationsEnabled = true;
   @Output() close = new EventEmitter<void>();
-
-  notifications: Notification[] = [];
-  notificationsEnabled = true;
+  @Output() openNotificationDetails = new EventEmitter<any>();
 
   private notificationsSubscription?: Subscription;
 
@@ -84,6 +84,12 @@ export class NotificationsPopupComponent implements OnInit, OnDestroy {
         }
 
       });
+  }
+
+  openNotification(notification: any) {
+
+    this.markAsRead(notification);
+    this.openNotificationDetails.emit(notification);
   }
 
 }

@@ -307,6 +307,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
   }
 
+  openProductFromNotification(productId: number): void {
+
+    const product = this.products.find(
+        p => p.id === productId
+    );
+
+    if (!product) return;
+    this.handleProductClick(product);
+  }
+
   //Product Popup
   openCreateProduct() {
     this.editableProduct = {

@@ -1,0 +1,23 @@
+<div class="modal-overlay" (click)="close.emit()">
+
+    <div class="notification-modal" (click)="$event.stopPropagation()">
+
+        <h2>
+            {{ notification?.title }}
+        </h2>
+
+        <p>
+            {{ notification?.message }}
+        </p>
+
+        <button class="go-product-btn" (click)="onGoToProduct()">
+            Click here to go to the product
+        </button>
+
+    </div>
+
+    <button class="action-icon-close" (click)="close.emit()">
+      <span class="material-symbols-rounded">close</span>
+    </button>
+
+</div>

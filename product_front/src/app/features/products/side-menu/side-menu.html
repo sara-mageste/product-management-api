@@ -25,11 +25,6 @@
         <div class="notification-dot menu-notification-dot" *ngIf="hasUnreadNotifications"></div>
       </button>
 
-      <app-notifications-popup
-        [isOpen]="isNotificationsOpen"
-        (close)="isNotificationsOpen = false">
-      </app-notifications-popup>
-
       <button class="menu-btn disabled">
         Promotions
         <span class="coming-soon-badge">Coming soon</span>
@@ -55,3 +50,19 @@
   [isOpen]="isAboutOpen"
   (close)="isAboutOpen = false">
 </app-about-me>
+
+<app-notifications-popup
+    [isOpen]="isNotificationsOpen"
+    [notifications]="notifications"
+    [notificationsEnabled]="notificationsEnabled"
+    (close)="isNotificationsOpen = false"
+    (openNotificationDetails)="openNotificationDetails($event)">
+</app-notifications-popup>
+
+<app-notification-details-modal
+  *ngIf="isNotificationDetailsModalOpen"
+  [notification]="selectedNotification"
+  (close)="isNotificationDetailsModalOpen = false"
+  (goToProduct)="goToProductFromNotification($event)">
+</app-notification-details-modal>
+

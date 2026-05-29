@@ -6,6 +6,7 @@ import { AboutMeComponent } from '../about-me/about-me';
 import { NotificationsPopupComponent } from '../notifications/notifications-popup/notifications-popup';
 import { Notification } from '../models/notification.model';
 import { NotificationService } from '../service/notification.service';
+import { NotificationDetailsModalComponent } from '../notifications/notifications-details-modal/notifications-details-modal';
 
 
 @Component({
@@ -13,7 +14,12 @@ import { NotificationService } from '../service/notification.service';
   standalone: true,
   templateUrl: './side-menu.html',
   styleUrls: ['./side-menu.css'],
-  imports: [AboutMeComponent, CommonModule, NotificationsPopupComponent]
+  imports: [
+    AboutMeComponent,
+    CommonModule,
+    NotificationsPopupComponent,
+    NotificationDetailsModalComponent
+  ]
 })
 
 export class SideMenuComponent implements OnInit, OnDestroy {
@@ -27,15 +33,20 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     };
 
     @Output() closeMenu = new EventEmitter<void>();
+    @Output() openProductFromNotification = new EventEmitter<number>();
 
     @ViewChild('menuContainer') 
     menuContainer!: ElementRef;
 
     isAboutOpen = false;
+
     isNotificationsOpen = false;
     notificationsEnabled = true;
     hasUnreadNotifications = false;
+
     notifications: Notification[] = [];
+    selectedNotification: Notification | null = null;
+    isNotificationDetailsModalOpen = false;
 
     private notificationsSubscription?: Subscription;
 
@@ -115,6 +126,17 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     toggleNotificationsEnabled() {
         this.notificationsEnabled =
             !this.notificationsEnabled;
+    }
+
+    openNotificationDetails(notification: Notification) {
+        this.selectedNotification = notification;
+        this.isNotificationDetailsModalOpen = true;
+    }
+
+    goToProductFromNotification(notification: Notification) {
+        this.isNotificationDetailsModalOpen = false;
+        this.isNotificationsOpen = false;
+        this.openProductFromNotification.emit(notification.productId);
     }
 
 }

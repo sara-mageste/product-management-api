@@ -14,7 +14,7 @@
 
     <div class="notifications-list">
 
-        <div class="notification-card" *ngFor="let notification of notifications" [class.read]="notification.read" (click)="markAsRead(notification)">
+        <div class="notification-card" *ngFor="let notification of notifications" [class.read]="notification.read" (click)="openNotification(notification)">
 
             <div class="notification-content">
 
@@ -25,6 +25,10 @@
 
         </div>
 
+        <div class="empty-notifications" *ngIf="notifications.length === 0">
+            No notifications at the moment.
+        </div>
+        
     </div>
 
     <button class="see-all-btn">

@@ -211,7 +211,8 @@
   <app-side-menu
     [isOpen]="isMenuOpen"
     [userProfile]="userProfile"
-    (closeMenu)="isMenuOpen = false">
+    (closeMenu)="isMenuOpen = false"
+    (openProductFromNotification)="openProductFromNotification($event)">
   </app-side-menu>
   
 </div>
