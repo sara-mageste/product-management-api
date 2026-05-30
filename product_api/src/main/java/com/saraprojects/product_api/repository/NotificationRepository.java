@@ -6,9 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    boolean existsByProductIdAndResolvedFalse(Long productId);
-    List<Notification> findByResolvedFalse();
     List<Notification> findByProductIdAndResolvedFalse(Long productId);
+    List<Notification> findAllByReadFalse();
     Optional<Notification> findFirstByProductIdAndResolvedFalse(Long productId);
-    long countByIsReadFalse();
+    long countByReadFalse();
 }

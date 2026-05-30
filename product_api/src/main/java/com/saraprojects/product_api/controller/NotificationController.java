@@ -25,6 +25,11 @@ public class NotificationController {
         notificationService.markAsRead(id);
     }
 
+    @PutMapping("/mark-all-read")
+    public void markAllAsRead() {
+        notificationService.markAllAsRead();
+    }
+
     @GetMapping("/unread/count")
     public long countUnreadNotifications() {
         return notificationService.countUnreadNotifications();
