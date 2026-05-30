@@ -52,11 +52,10 @@
 </app-about-me>
 
 <app-notifications-popup
-    [isOpen]="isNotificationsOpen"
-    [notifications]="notifications"
-    [notificationsEnabled]="notificationsEnabled"
-    (close)="isNotificationsOpen = false"
-    (openNotificationDetails)="openNotificationDetails($event)">
+  [isOpen]="isNotificationsOpen"
+  (close)="isNotificationsOpen = false"
+  (openNotificationDetails)="openNotificationDetails($event)"
+  (unreadStateChange)="onNotificationsStateChange($event)">
 </app-notifications-popup>
 
 <app-notification-details-modal

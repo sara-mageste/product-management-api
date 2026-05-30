@@ -212,7 +212,8 @@
     [isOpen]="isMenuOpen"
     [userProfile]="userProfile"
     (closeMenu)="isMenuOpen = false"
-    (openProductFromNotification)="openProductFromNotification($event)">
+    (openProductFromNotification)="openProductFromNotification($event)"
+    (unreadStateChange)="hasUnreadNotifications = $event">
   </app-side-menu>
   
 </div>

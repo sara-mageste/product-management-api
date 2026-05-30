@@ -8,9 +8,13 @@ import { Notification } from '../models/notification.model';
 @Injectable({
   providedIn: 'root'
 })
+
 export class NotificationService {
 
   private apiUrl = 'http://localhost:8080/notifications';
+  private notificationsUpdated = new BehaviorSubject<void>(undefined);
+
+  notificationsUpdated$ = this.notificationsUpdated.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -20,19 +24,16 @@ export class NotificationService {
     );
   }
 
-  private notificationsUpdated = new BehaviorSubject<void>(undefined);
-
-  notificationsUpdated$ = this.notificationsUpdated.asObservable();
-
   notifyNotificationsUpdated(): void {
     this.notificationsUpdated.next();
   }
 
   markAsRead(id: number) {
-    return this.http.put(
-      `${this.apiUrl}/${id}/read`,
-      {}
-    );
+    return this.http.put(`${this.apiUrl}/${id}/read`, {});
+  }
+
+  markAllAsRead(): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/mark-all-read`, {});
   }
 
 }

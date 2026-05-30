@@ -17,11 +17,11 @@
 
 /* Popup */
 .notifications-popup {
-  position: fixed;
+  position: fixed;;
   top: 50%;
   left: 50%;
   width: 340px;
-  max-height: 500px;
+  max-height: 450px;
   border-radius: 24px;
   padding: 20px;
 
@@ -52,37 +52,52 @@
   color: #eaeae1;
 }
 
-/* Toggle */
-.notification-toggle {
-  width: 42px;
-  height: 24px;
-
-  border: none;
-  border-radius: 999px;
-  background-color: #eaeae1;
-  padding: 3px;
-  cursor: pointer;
+/* Read All */
+.mark-read-btn {
   position: relative;
-  transition: 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
 }
 
-.notification-toggle.active {
-  background-color: #8ac731;
+.read-icon {
+  padding: 6px;
+  font-size: 18px;
+  color: #eaeae1;
+  opacity: 0.6;
+  transition: all 0.2s ease;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.3);
 }
 
-/* Ball */
-.toggle-ball {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
+.read-icon:hover {
+  opacity: 1;
+  transform: scale(1.12);
+}
+
+.read-all-badge {
+  position:absolute;
+  right: -65px;
+
+  transform: translateY(-50%) translateX(10px);
+
+  padding: 4px 10px;
+  border-radius: 999px;
   background-color: #787662;
-  transition: 0.2s ease;
+  color: #eaeae1;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+
+  opacity: 0;
+  pointer-events: none;
+
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Active */
-.toggle-ball.active {
-  transform: translateX(18px);
-  background-color: #eaeae1;
+.mark-read-btn:hover .read-all-badge {
+  opacity: 1;
+  transform: translateY(-50%) translateX(0);
 }
 
 /* List */
@@ -92,17 +107,20 @@
   gap: 12px;
 
   overflow-y: auto;
+  scrollbar-width: none;
 }
 
 .empty-notifications {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 120px;
   text-align: center;
   color: #eaeae1;
   font-size: 14px;
   padding: 16px;
 }
+
 
 /* Card */
 .notification-card {
@@ -112,7 +130,7 @@
   padding: 14px 16px;
 
   border-radius: 18px;
-  background-color: #f3f2ea;
+  background-color: #eaeae1;
 
   cursor: pointer;
   transition: 0.2s ease;
@@ -157,7 +175,8 @@
 /* Footer */
 .see-all-btn {
   margin-top: 18px;
-  height: 25px;
+
+  height: 42px;
 
   border: none;
   border-radius: 999px;

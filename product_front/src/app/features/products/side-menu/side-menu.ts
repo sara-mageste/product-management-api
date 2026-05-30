@@ -8,7 +8,6 @@ import { Notification } from '../models/notification.model';
 import { NotificationService } from '../service/notification.service';
 import { NotificationDetailsModalComponent } from '../notifications/notifications-details-modal/notifications-details-modal';
 
-
 @Component({
   selector: 'app-side-menu',
   standalone: true,
@@ -21,122 +20,94 @@ import { NotificationDetailsModalComponent } from '../notifications/notification
     NotificationDetailsModalComponent
   ]
 })
-
 export class SideMenuComponent implements OnInit, OnDestroy {
 
-    @Input() isOpen = false;
+  @Input() isOpen = false;
 
-    @Input() userProfile!: {
-        name: string;
-        employeeCode: string;
-        imageUrl: string;
-    };
+  @Input() userProfile!: {
+    name: string;
+    employeeCode: string;
+    imageUrl: string;
+  };
 
-    @Output() closeMenu = new EventEmitter<void>();
-    @Output() openProductFromNotification = new EventEmitter<number>();
+  @Output() closeMenu = new EventEmitter<void>();
+  @Output() openProductFromNotification = new EventEmitter<number>();
+  @Output() unreadStateChange = new EventEmitter<boolean>();
 
-    @ViewChild('menuContainer') 
-    menuContainer!: ElementRef;
+  @ViewChild('menuContainer')
+  menuContainer!: ElementRef;
 
-    isAboutOpen = false;
+  isAboutOpen = false;
+  isNotificationsOpen = false;
+  notificationsEnabled = true;
+  hasUnreadNotifications = false;
 
-    isNotificationsOpen = false;
-    notificationsEnabled = true;
-    hasUnreadNotifications = false;
+  selectedNotification: Notification | null = null;
+  isNotificationDetailsModalOpen = false;
 
-    notifications: Notification[] = [];
-    selectedNotification: Notification | null = null;
-    isNotificationDetailsModalOpen = false;
+  private notificationsSubscription?: Subscription;
 
-    private notificationsSubscription?: Subscription;
+  constructor(private notificationService: NotificationService) {}
 
-    constructor(
-        private notificationService: NotificationService
-    ) {}
+  ngOnInit(): void {
+    // atualiza o dot sempre que produto for salvo
+    this.notificationsSubscription =
+      this.notificationService.notificationsUpdated$.subscribe(() => {
+        this.refreshUnreadState();
+      });
 
-    // Lifecycle
-    ngOnInit(): void {
-        this.loadNotifications();
+    this.refreshUnreadState();
+  }
 
-        this.notificationsSubscription =
-        this.notificationService.notificationsUpdated$
-        .subscribe(() => {
-            this.checkUnreadNotifications();
-        });
-    }
+  ngOnDestroy(): void {
+    this.notificationsSubscription?.unsubscribe();
+  }
 
-    ngOnDestroy(): void {
-        this.notificationsSubscription?.unsubscribe();
-    }
+  refreshUnreadState(): void {
+    this.notificationService.getNotifications().subscribe({
+      next: (data) => {
+        this.hasUnreadNotifications = data.some(n => !n.read);
+      },
+      error: (err) => console.error('Error loading notifications', err)
+    });
+  }
 
-    // Click Outside
-    @HostListener('document:click', ['$event'])
-    onDocumentClick(event: MouseEvent): void {
+  onNotificationsStateChange(hasUnread: boolean): void {
+    this.hasUnreadNotifications = hasUnread;
+    this.unreadStateChange.emit(hasUnread);
+  }
 
-        if (!this.isOpen) return;
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.isOpen) return;
+    const clickedInside = this.menuContainer.nativeElement.contains(event.target);
+    if (!clickedInside) this.closeMenu.emit();
+  }
 
-        const clickedInside =
-            this.menuContainer.nativeElement.contains(event.target);
+  toggleAbout() {
+    this.isAboutOpen = !this.isAboutOpen;
+    if (this.isAboutOpen) this.isNotificationsOpen = false;
+  }
 
-        if (!clickedInside) {
-            this.closeMenu.emit();
-        }
-    }
+  aboutMe = {
+    name: 'Sara Mageste',
+    employeeCode: 'EMP-2026',
+    imageUrl: '/images/profile.png'
+  };
 
-    // About
-    toggleAbout() {
-        this.isAboutOpen = !this.isAboutOpen;
-    }
+  toggleNotifications() {
+    this.isNotificationsOpen = !this.isNotificationsOpen;
+    if (this.isNotificationsOpen) this.isAboutOpen = false;
+  }
 
-    aboutMe = {
-        name: 'Sara Mageste',
-        employeeCode: 'EMP-2026',
-        imageUrl: '/images/profile.png'
-    };
-        
+  openNotificationDetails(notification: Notification) {
+    this.selectedNotification = notification;
+    this.isNotificationDetailsModalOpen = true;
+  }
 
-    // Notifications
-    loadNotifications(): void {
-        this.notificationService.getNotifications().subscribe({
-            next: (data) => {
-                this.notifications = data;
-                this.hasUnreadNotifications = data.some(notification => !notification.read);
-            },
-            error: (err) => {
-                console.error('Error loading notifications', err);
-            }
-        });
-    }
-
-    checkUnreadNotifications(): void {
-        this.notificationService.getNotifications().subscribe({
-            next: (notifications) => {
-                this.hasUnreadNotifications = notifications.some(notification => !notification.read);
-            },
-                error: (err) => { console.error( 'Error checking notifications', err);
-            }
-        });
-    }
-
-    toggleNotifications() {
-        this.isNotificationsOpen =
-            !this.isNotificationsOpen;
-    }
-
-    toggleNotificationsEnabled() {
-        this.notificationsEnabled =
-            !this.notificationsEnabled;
-    }
-
-    openNotificationDetails(notification: Notification) {
-        this.selectedNotification = notification;
-        this.isNotificationDetailsModalOpen = true;
-    }
-
-    goToProductFromNotification(notification: Notification) {
-        this.isNotificationDetailsModalOpen = false;
-        this.isNotificationsOpen = false;
-        this.openProductFromNotification.emit(notification.productId);
-    }
-
+  goToProductFromNotification(notification: Notification) {
+    this.isNotificationDetailsModalOpen = false;
+    this.isNotificationsOpen = false;
+    this.openProductFromNotification.emit(notification.productId);
+  }
 }

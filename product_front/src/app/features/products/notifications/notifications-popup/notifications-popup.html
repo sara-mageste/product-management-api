@@ -6,9 +6,10 @@
 
         <h2>Notifications</h2>
 
-        <button class="notification-toggle" [class.active]="notificationsEnabled" (click)="toggleNotificationsEnabled()">
-            <div class="toggle-ball" [class.active]="notificationsEnabled"></div>
-        </button>
+        <div class="mark-read-btn" (click)="markAllAsRead()">
+            <span class="material-symbols-rounded read-icon">visibility</span>
+            <span class="read-all-badge">Read all</span>
+        </div>
 
     </div>
 
