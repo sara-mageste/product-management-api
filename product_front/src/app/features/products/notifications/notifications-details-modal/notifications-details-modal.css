@@ -29,36 +29,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.notification-modal h2 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #787662;
-}
-
-.notification-modal p {
-  font-size: 15px;
-  line-height: 1.5;
-  color: #787662;
-}
-
-.go-product-btn {
-  background: none;
-  border: none;
-  text-align: left;
-  font-size: 15px;
-  text-decoration: underline;
-  color: #787662;
-  padding: 0;
-  cursor: pointer;
-
-  transition: opacity 0.2s ease;
-}
-
-.go-product-btn:hover {
-  opacity: 0.7;
-}
-
 /* Close button */
 .action-icon-close {
   width: 42px;

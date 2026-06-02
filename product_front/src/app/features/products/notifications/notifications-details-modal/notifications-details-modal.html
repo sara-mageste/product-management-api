@@ -2,17 +2,10 @@
 
     <div class="notification-modal" (click)="$event.stopPropagation()">
 
-        <h2>
-            {{ notification?.title }}
-        </h2>
-
-        <p>
-            {{ notification?.message }}
-        </p>
-
-        <button class="go-product-btn" (click)="onGoToProduct()">
-            Click here to go to the product
-        </button>
+        <app-notification-details
+            [notification]="notification"
+            (goToProduct)="onGoToProduct()">
+        </app-notification-details>
 
     </div>
 

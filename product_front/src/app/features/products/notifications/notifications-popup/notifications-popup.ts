@@ -29,7 +29,6 @@ export class NotificationsPopupComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.loadNotifications();
 
-    // mantém o listener original — quando produto é salvo, atualiza na hora
     this.notificationsSubscription =
       this.notificationService.notificationsUpdated$.subscribe(() => {
         this.loadNotifications();
