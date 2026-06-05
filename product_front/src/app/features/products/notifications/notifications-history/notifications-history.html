@@ -1,0 +1,75 @@
+<div class="notifications-page">
+
+  <aside class="sidebar left">
+
+    <div class="sidebar-top">
+      <button class="action-icon back-btn" (click)="goBack()">
+        <span class="material-symbols-rounded">keyboard_arrow_left</span>
+      </button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="action-icon" *ngIf="currentPage > 0" (click)="previousPage()">
+        <span class="material-symbols-rounded">keyboard_arrow_left</span>
+      </button>
+    </div>
+
+  </aside>
+
+  <div class="page-header">
+    <h1>Notifications History</h1>
+  </div>
+
+  <main class="notifications-content">
+
+    <ng-container *ngIf="loading">
+      <p class="status-msg">Loading notifications...</p>
+    </ng-container>
+
+    <ng-container *ngIf="!loading">
+      <div class="notifications-grid" *ngIf="pagedNotifications.length > 0; else emptyState">
+
+        <app-notification-details
+          *ngFor="let notification of pagedNotifications"
+          [notification]="notification"
+          (goToProduct)="onNotificationAction($event)">
+        </app-notification-details>
+
+      </div>
+
+      <ng-template #emptyState>
+        <p class="status-msg">No notifications in history.</p>
+      </ng-template>
+    </ng-container>
+
+  </main>
+
+  <aside class="sidebar right">
+
+    <div class="sidebar-top">
+      <button
+        class="clear-btn"
+        [disabled]="notifications.length === 0"
+        (click)="openClearConfirm()">
+        Clear History
+      </button>
+    </div>
+
+    <div class="sidebar-bottom">
+      <button class="action-icon" *ngIf="currentPage < totalPages - 1" (click)="nextPage()">
+        <span class="material-symbols-rounded">keyboard_arrow_right</span>
+      </button>
+    </div>
+    
+  </aside>
+
+</div>
+
+<app-confirmation-modal
+  [isOpen]="showClearHistoryConfirm"
+  [title]="'Clear notifications history'"
+  [message]="'All notifications will be permanently deleted. Are you sure you want to continue?'"
+  [confirmText]="'Clear history'"
+  (confirm)="confirmClearHistory()"
+  (cancel)="cancelClearHistory()">
+</app-confirmation-modal>

@@ -36,4 +36,16 @@ export class NotificationService {
     return this.http.put<void>(`${this.apiUrl}/mark-all-read`, {});
   }
 
+  getAllNotifications(): Observable<Notification[]> {
+    return this.http.get<Notification[]>(`${this.apiUrl}/history`).pipe(
+      tap(() => console.log('All notifications refreshed'))
+    );
+  }
+
+  clearHistory() {
+    return this.http.delete(
+      `${this.apiUrl}/history`
+    );
+  }
+
 }

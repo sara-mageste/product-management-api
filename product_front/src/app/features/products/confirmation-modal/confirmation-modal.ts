@@ -2,13 +2,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-delete-confirm-modal',
+  selector: 'app-confirmation-modal',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './product-delete-modal.html',
-  styleUrl: './product-delete-modal.css'
+  templateUrl: './confirmation-modal.html',
+  styleUrl: './confirmation-modal.css'
 })
-export class DeleteConfirmModalComponent {
+export class ConfirmationModalComponent {
 
   @Input() isOpen = false;
   @Input() title: string = 'Confirm action';

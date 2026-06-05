@@ -243,32 +243,32 @@
   [imageError]="imageError"
 ></app-product-modal>
 
-<app-delete-confirm-modal
+<app-confirmation-modal
   [isOpen]="showDeleteConfirm"
   [title]="'Delete product'"
   [message]="'Are you sure you want to delete ' + selectedProduct?.name + '?'"
   [confirmText]="'Delete'"
   (confirm)="confirmDelete()"
   (cancel)="cancelDelete()"
-></app-delete-confirm-modal>
+></app-confirmation-modal>
 
-<app-delete-confirm-modal
+<app-confirmation-modal
   [isOpen]="showExitConfirm"
   [title]="'Unsaved changes'"
   [message]="'You have unsaved changes. Do you really want to leave?'"
   [confirmText]="'Leave'"
   (confirm)="confirmExit()"
   (cancel)="cancelExit()"
-></app-delete-confirm-modal>
+></app-confirmation-modal>
 
-<app-delete-confirm-modal
+<app-confirmation-modal
   [isOpen]="showBulkDeleteConfirm"
   [title]="'Delete products'"
   [message]="'These products will be permanently removed. Are you sure?'"
   [confirmText]="'Delete'"
   (confirm)="confirmBulkDelete()"
   (cancel)="cancelBulkDelete()"
-></app-delete-confirm-modal>
+></app-confirmation-modal>
 
 <div class="success-toast" *ngIf="showDeleteSuccess">
   Products removed successfully!

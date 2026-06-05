@@ -1,4 +1,4 @@
-.delete-modal-overlay {
+.confirmation-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@
   z-index: 2000;
 }
 
-.delete-modal {
+.confirmation-modal {
   background: #eaeae1;
   padding: 30px;
   border-radius: 18px;
@@ -24,12 +24,12 @@
 
 }
 
-.delete-modal-overlay h3 {
+.confirmation-modal-overlay h3 {
   font-weight: 600;
   color: #787662;
 }
 
-.delete-actions {
+.confirmation-actions {
   margin-top: 20px;
   display: flex;
   justify-content: space-between;

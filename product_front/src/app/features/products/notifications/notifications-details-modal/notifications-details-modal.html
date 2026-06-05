@@ -1,13 +1,10 @@
 <div class="modal-overlay" (click)="close.emit()">
 
-    <div class="notification-modal" (click)="$event.stopPropagation()">
+    <app-notification-details
+        [notification]="notification"
+        (goToProduct)="onGoToProduct()">
+    </app-notification-details>
 
-        <app-notification-details
-            [notification]="notification"
-            (goToProduct)="onGoToProduct()">
-        </app-notification-details>
-
-    </div>
 
     <button class="action-icon-close" (click)="close.emit()">
       <span class="material-symbols-rounded">close</span>

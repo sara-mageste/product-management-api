@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild, ElementRef, HostListener} from '@angular/core'; 
 import { CommonModule } from '@angular/common'; 
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { Product } from '../models/product.model'; 
@@ -14,8 +15,9 @@ import { NotificationService } from '../service/notification.service';
 
 import { ProductCardComponent } from '../product-card/product-card'; 
 import { ProductModalComponent } from '../product-modal/product-modal';
-import { DeleteConfirmModalComponent } from '../product-delete-modal/product-delete-modal';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal';
 import { SideMenuComponent } from '../side-menu/side-menu';
+
 
 
 @Component({
@@ -27,7 +29,7 @@ import { SideMenuComponent } from '../side-menu/side-menu';
     FormsModule, 
     ProductCardComponent, 
     ProductModalComponent, 
-    DeleteConfirmModalComponent, 
+    ConfirmationModalComponent, 
     SideMenuComponent
   ],
 
@@ -113,6 +115,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private cdr: ChangeDetectorRef,
     private notificationService: NotificationService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   // Lifecycle
@@ -122,11 +126,11 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     this.notificationsSubscription =
     this.notificationService.notificationsUpdated$
-      .subscribe(() => {
-
+      .subscribe(() => { 
         this.checkUnreadNotifications();
-
       });
+
+    this.listenForProductNavigation();
   }
 
   ngOnDestroy(): void {
@@ -317,6 +321,18 @@ export class ProductListComponent implements OnInit, OnDestroy {
     this.handleProductClick(product);
   }
 
+  private listenForProductNavigation(): void {
+    this.route.queryParams.subscribe(params => {
+      const productId = Number(params['openProduct']);
+
+      if (!productId) {
+        return;
+      }
+
+      this.openProductById(productId);
+    });
+  }
+
   //Product Popup
   openCreateProduct() {
     this.editableProduct = {
@@ -353,6 +369,28 @@ export class ProductListComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  openProductById(productId: number): void {
+    this.productService.getProductById(productId).subscribe({
+      next: (product) => {
+        this.selectedProduct = product;
+        this.editableProduct = { ...product };
+        this.isDetailsOpen = true;
+        this.isEditMode = false;
+        this.mode = 'view';
+
+         this.router.navigate([], {
+          queryParams: {
+            openProduct: null
+          },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+
+        this.cdr.detectChanges();
+      }
+    });
+}
 
   enableEdit() {
     this.isEditMode = true;

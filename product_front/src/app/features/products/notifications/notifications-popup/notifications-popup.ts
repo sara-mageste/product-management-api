@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { Notification } from '../../models/notification.model';
@@ -24,7 +25,7 @@ export class NotificationsPopupComponent implements OnInit, OnDestroy {
 
   private notificationsSubscription?: Subscription;
 
-  constructor(private notificationService: NotificationService) {}
+  constructor(private notificationService: NotificationService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadNotifications();
@@ -84,4 +85,10 @@ export class NotificationsPopupComponent implements OnInit, OnDestroy {
       }
     });
   }
+
+  goToHistory(): void {
+    this.close.emit();
+    this.router.navigate(['/notifications']);
+  }
+  
 }
