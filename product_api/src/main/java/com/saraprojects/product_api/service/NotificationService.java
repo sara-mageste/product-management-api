@@ -79,7 +79,7 @@ public class NotificationService {
     public Notification  markAsRead(Long id) {
 
         Notification notification = notificationRepository.findById(id).orElseThrow(() ->
-            new RuntimeException("Notification not found")
+                new RuntimeException("Notification not found")
         );
 
         notification.setRead(true);
@@ -94,5 +94,16 @@ public class NotificationService {
         List<Notification> notifications = notificationRepository.findAllByReadFalse();
         notifications.forEach(n -> n.setRead(true));
         notificationRepository.saveAll(notifications);
+    }
+
+    public List<Notification> getNotificationHistory() {
+        return notificationRepository.findAll()
+                .stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .toList();
+    }
+
+    public void clearHistory() {
+        notificationRepository.deleteAll();
     }
 }

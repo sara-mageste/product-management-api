@@ -3,6 +3,7 @@ package com.saraprojects.product_api.controller;
 import com.saraprojects.product_api.model.Notification;
 import com.saraprojects.product_api.service.NotificationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,5 +34,16 @@ public class NotificationController {
     @GetMapping("/unread/count")
     public long countUnreadNotifications() {
         return notificationService.countUnreadNotifications();
+    }
+
+    @GetMapping("/history")
+    public List<Notification> getNotificationHistory() {
+        return notificationService.getNotificationHistory();
+    }
+
+    @DeleteMapping("/history")
+    public ResponseEntity<Void> clearHistory() {
+        notificationService.clearHistory();
+        return ResponseEntity.noContent().build();
     }
 }
