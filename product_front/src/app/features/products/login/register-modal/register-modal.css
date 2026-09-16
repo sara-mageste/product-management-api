@@ -120,6 +120,41 @@
   opacity: 0.6;
 }
 
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper input {
+  padding-right: 40px;
+}
+
+.toggle-visibility-btn {
+  position: absolute;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: #c5c3aa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.toggle-visibility-btn .material-symbols-rounded {
+  font-size: 18px;
+}
+
+/* Remove o ícone nativo do Edge, que tem comportamento inconsistente */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none;
+}
+
 .field-divider {
   height: 1px;
   background-color: #c5c3aa;

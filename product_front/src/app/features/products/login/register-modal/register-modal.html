@@ -53,28 +53,52 @@
                 </div>
 
                 <div class="field-wrapper" [class.input-error]="passwordInvalid()">
-                    <input
-                    type="password"
-                    placeholder="Password"
-                    [ngModel]="password()"
-                    (ngModelChange)="password.set($event)"
-                    name="password"
-                    [class.input-error]="passwordInvalid()"
-                    [disabled]="submitting()"
-                    />
+                    <div class="password-input-wrapper">
+                        <input
+                        [type]="showPassword() ? 'text' : 'password'"
+                        placeholder="Password"
+                        [ngModel]="password()"
+                        (ngModelChange)="password.set($event)"
+                        name="password"
+                        [disabled]="submitting()"
+                        (focus)="passwordFocused.set(true)"
+                        (blur)="passwordFocused.set(false)"
+                        />
+                        @if (passwordFocused()) {
+                            <button
+                                type="button"
+                                class="toggle-visibility-btn"
+                                (mousedown)="$event.preventDefault()"
+                                (click)="togglePasswordVisibility()"
+                            >
+                                <span class="material-symbols-rounded">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+                            </button>
+                            }
+                    </div>
                     <div class="field-divider"></div>
                 </div>
 
                 <div class="field-wrapper" [class.input-error]="confirmPasswordInvalid()">
                     <input
-                    type="password"
+                    [type]="showConfirmPassword() ? 'text' : 'password'"
                     placeholder="Repeat Password"
                     [ngModel]="confirmPassword()"
                     (ngModelChange)="confirmPassword.set($event)"
                     name="confirmPassword"
-                    [class.input-error]="confirmPasswordInvalid()"
                     [disabled]="submitting()"
+                    (focus)="confirmPasswordFocused.set(true)"
+                    (blur)="confirmPasswordFocused.set(false)"
                     />
+                    @if (confirmPasswordFocused()) {
+                        <button
+                            type="button"
+                            class="toggle-visibility-btn"
+                            (mousedown)="$event.preventDefault()"
+                            (click)="toggleConfirmPasswordVisibility()"
+                        >
+                            <span class="material-symbols-rounded">{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</span>
+                        </button>
+                        }
                     <div class="field-divider"></div>
                 </div>
                 

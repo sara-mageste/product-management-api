@@ -36,6 +36,11 @@ export class RegisterModalComponent {
 
   passwordHint = 'Password must be at least 8 characters.';
 
+  showPassword = signal(false);
+  showConfirmPassword = signal(false);
+  passwordFocused = signal(false);
+  confirmPasswordFocused = signal(false);
+
   emailInvalid = computed(() =>
     this.emailTaken() || (this.triedSave() && !this.isEmailValid())
   );
@@ -47,6 +52,14 @@ export class RegisterModalComponent {
   confirmPasswordInvalid = computed(() =>
     this.triedSave() && (!this.confirmPassword() || this.confirmPassword() !== this.password())
   );
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword.update(v => !v);
+  }
 
   errorMessage = computed(() => {
     if (this.emailTaken()) {

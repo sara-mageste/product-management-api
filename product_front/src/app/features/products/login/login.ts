@@ -33,6 +33,9 @@ export class LoginComponent implements OnDestroy {
   submitting = signal(false);
   isLocked = signal(false);
 
+  showPassword = signal(false);
+  passwordFocused = signal(false);
+
   showRegisterModal = signal(false);
 
   private lockIntervalId?: ReturnType<typeof setInterval>;
@@ -79,6 +82,10 @@ export class LoginComponent implements OnDestroy {
         this.handleLoginError(err);
       }
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword.update(v => !v);
   }
 
   private handleLoginError(err: HttpErrorResponse): void {

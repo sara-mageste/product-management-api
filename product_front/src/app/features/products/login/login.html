@@ -21,16 +21,29 @@
 
       <div class="field-divider"></div>
 
-      <input
-        type="password"
-        placeholder="Password"
-        [ngModel]="password()"
-        (ngModelChange)="password.set($event)"
-        name="password"
-        [disabled]="isLocked() || submitting()"
-        autocomplete="current-password"
-      />
-
+      <div class="password-input-wrapper">
+        <input
+          [type]="showPassword() ? 'text' : 'password'"
+          placeholder="Password"
+          [ngModel]="password()"
+          (ngModelChange)="password.set($event)"
+          name="password"
+          [disabled]="isLocked() || submitting()"
+          autocomplete="current-password"
+          (focus)="passwordFocused.set(true)"
+          (blur)="passwordFocused.set(false)"
+        />
+        @if (passwordFocused()) {
+          <button
+            type="button"
+            class="toggle-visibility-btn"
+            (mousedown)="$event.preventDefault()"
+            (click)="togglePasswordVisibility()"
+          >
+            <span class="material-symbols-rounded">{{ showPassword() ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        }
+      </div>
     </div>
 
     <button
