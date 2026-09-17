@@ -79,6 +79,7 @@
                 </div>
 
                 <div class="field-wrapper" [class.input-error]="confirmPasswordInvalid()">
+                    <div class="password-input-wrapper">
                     <input
                     [type]="showConfirmPassword() ? 'text' : 'password'"
                     placeholder="Repeat Password"
@@ -99,6 +100,7 @@
                             <span class="material-symbols-rounded">{{ showConfirmPassword() ? 'visibility_off' : 'visibility' }}</span>
                         </button>
                         }
+                    </div>
                     <div class="field-divider"></div>
                 </div>
                 

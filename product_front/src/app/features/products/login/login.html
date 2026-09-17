@@ -85,3 +85,10 @@
     (registered)="onRegistered($event)"
   ></app-register-modal>
 }
+
+@if (showWelcomeModal()) {
+  <app-welcome-modal
+    [employeeCode]="welcomeCode()"
+    (confirmed)="onWelcomeConfirmed()"
+  ></app-welcome-modal>
+}

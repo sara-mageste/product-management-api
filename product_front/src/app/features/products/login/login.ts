@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { AuthService } from '../service/auth.service';
 import { RegisterModalComponent } from './register-modal/register-modal';
+import { WelcomeModalComponent } from './welcome-modal/welcome-modal';
 import { RegisterResponse } from '../models/auth.model';
 
 type Fruit = 'banana' | 'orange' | 'apple';
@@ -16,7 +17,7 @@ const ANIMATION_DURATION_MS = 650;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RegisterModalComponent],
+  imports: [CommonModule, FormsModule, RegisterModalComponent, WelcomeModalComponent],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -37,6 +38,8 @@ export class LoginComponent implements OnDestroy {
   passwordFocused = signal(false);
 
   showRegisterModal = signal(false);
+  showWelcomeModal = signal(false);
+  welcomeCode = signal('');
 
   private lockIntervalId?: ReturnType<typeof setInterval>;
   private animationTimeoutId?: ReturnType<typeof setTimeout>;
@@ -191,10 +194,14 @@ export class LoginComponent implements OnDestroy {
   }
 
   onRegistered(response: RegisterResponse): void {
-    // TODO: substituir por tela "Welcome to Feirinha" na próxima etapa.
-    // Por enquanto, fecha o modal e já preenche o código no campo de login.
     this.showRegisterModal.set(false);
-    this.employeeCode.set(response.employeeCode);
+    this.welcomeCode.set(response.employeeCode);
+    this.showWelcomeModal.set(true);
+  }
+
+  onWelcomeConfirmed(): void {
+    this.showWelcomeModal.set(false);
+    this.employeeCode.set(this.welcomeCode());
   }
   
 }

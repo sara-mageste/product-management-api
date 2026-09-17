@@ -1,0 +1,44 @@
+<div class="welcome-backdrop">
+
+  <div class="welcome-panel">
+
+    <div class="confetti">
+      <span class="confetti-piece dash orange c1"></span>
+      <span class="confetti-piece dash pink c2"></span>
+      <span class="confetti-piece dash teal c3"></span>
+      <span class="confetti-piece dot pink c4"></span>
+      <span class="confetti-piece dot teal c5"></span>
+      <span class="confetti-piece dot orange c6"></span>
+      <span class="confetti-piece star pink c7"></span>
+      <span class="confetti-piece star orange c8"></span>
+      <span class="confetti-piece star teal c9"></span>
+      <span class="confetti-piece dot pink c10"></span>
+    </div>
+
+    <svg class="welcome-title-svg" viewBox="0 0 400 100">
+      <defs>
+        <path id="arcPath" d="M 20,80 Q 200,-20 380,80" />
+      </defs>
+      <text class="welcome-title-text">
+        <textPath href="#arcPath" startOffset="50%" text-anchor="middle">
+          Welcome to Feirinha!
+        </textPath>
+      </text>
+    </svg>
+
+    <div class="box-wrapper">
+      <div class="welcome-box">
+        <p>Account successfully created!</p>
+        <p>Your login code has been generated:</p>
+
+        <p class="welcome-code">{{ employeeCode() }}</p>
+
+        <p>This code has also been sent to your email!</p>
+      </div>
+
+      <button type="button" class="welcome-ok-btn" (click)="onConfirm()">
+        Ok
+      </button>
+    </div>
+
+</div>
