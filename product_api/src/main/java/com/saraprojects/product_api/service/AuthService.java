@@ -4,35 +4,42 @@ import com.saraprojects.product_api.dto.*;
 import com.saraprojects.product_api.exception.AccountLockedException;
 import com.saraprojects.product_api.exception.EmailAlreadyExistsException;
 import com.saraprojects.product_api.exception.InvalidCredentialsException;
-import com.saraprojects.product_api.exception.PasswordMismatchException;
 import com.saraprojects.product_api.exception.InvalidRequestException;
+import com.saraprojects.product_api.exception.PasswordMismatchException;
 import com.saraprojects.product_api.model.LoginAttempt;
+import com.saraprojects.product_api.model.PasswordResetToken;
 import com.saraprojects.product_api.model.RefreshToken;
 import com.saraprojects.product_api.model.User;
 import com.saraprojects.product_api.repository.LoginAttemptRepository;
+import com.saraprojects.product_api.repository.PasswordResetTokenRepository;
 import com.saraprojects.product_api.repository.UserRepository;
 import com.saraprojects.product_api.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
 
     private static final int MAX_ATTEMPTS = 3;
     private static final int LOCK_DURATION_MINUTES = 5;
+    private static final int RESET_TOKEN_EXPIRATION_MINUTES = 30;
 
     private static final Set<Integer> ALLOWED_AVATAR_IDS = Set.of(1, 2, 3, 4, 5, 6, 7, 8);
 
     private final UserRepository userRepository;
     private final LoginAttemptRepository loginAttemptRepository;
+    private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
@@ -145,6 +152,59 @@ public class AuthService {
     public void logout(RefreshRequestDTO dto) {
         RefreshToken token = refreshTokenService.validateAndGet(dto.refreshToken());
         refreshTokenService.revoke(token);
+    }
+
+    public MessageResponseDTO forgotPassword(ForgotPasswordRequestDTO dto) {
+
+        Optional<User> userOpt = userRepository.findByEmail(dto.email());
+
+        if (userOpt.isPresent()) {
+            User user = userOpt.get();
+
+            passwordResetTokenRepository.deleteByUser(user);
+
+            String token = UUID.randomUUID().toString();
+
+            PasswordResetToken resetToken = PasswordResetToken.builder()
+                    .token(token)
+                    .user(user)
+                    .expiryDate(LocalDateTime.now().plusMinutes(RESET_TOKEN_EXPIRATION_MINUTES))
+                    .used(false)
+                    .build();
+
+            passwordResetTokenRepository.save(resetToken);
+
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getName(), token);
+        }
+
+        return new MessageResponseDTO(
+                "If that email is registered, a password reset code has been sent to it."
+        );
+    }
+
+    public MessageResponseDTO resetPassword(ResetPasswordRequestDTO dto) {
+
+        if (!dto.newPassword().equals(dto.confirmPassword())) {
+            throw new PasswordMismatchException("Passwords do not match");
+        }
+
+        PasswordResetToken resetToken = passwordResetTokenRepository.findByToken(dto.token())
+                .orElseThrow(() -> new InvalidCredentialsException("Invalid or expired reset code"));
+
+        if (resetToken.isUsed() || resetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new InvalidCredentialsException("Invalid or expired reset code");
+        }
+
+        User user = resetToken.getUser();
+        user.setPassword(passwordEncoder.encode(dto.newPassword()));
+        userRepository.save(user);
+
+        resetToken.setUsed(true);
+        passwordResetTokenRepository.save(resetToken);
+
+        refreshTokenService.revokeAllForUser(user);
+
+        return new MessageResponseDTO("Password reset successfully. You can now sign in with your new password.");
     }
 
     private void registerFailedAttempt(LoginAttempt attempt, LocalDateTime now) {

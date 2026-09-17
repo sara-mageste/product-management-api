@@ -31,9 +31,6 @@ public class EmailService {
         this.restTemplate = restTemplate;
     }
 
-    // Assíncrono e não-bloqueante de propósito: se o envio falhar (Brevo fora do ar,
-    // cota excedida, etc.), o cadastro do usuário NÃO deve ser afetado — o código
-    // já foi mostrado na tela, o e-mail é só um canal complementar de backup.
     @Async
     public void sendEmployeeCodeEmail(String toEmail, String toName, String employeeCode) {
         try {
@@ -53,8 +50,30 @@ public class EmailService {
             restTemplate.postForEntity(BREVO_API_URL, request, String.class);
 
         } catch (Exception e) {
-            // Não relança a exceção: falha de e-mail não pode derrubar o fluxo de cadastro
             System.err.println("Failed to send employee code email: " + e.getMessage());
+        }
+    }
+
+    @Async
+    public void sendPasswordResetEmail(String toEmail, String toName, String resetToken) {
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", brevoApiKey);
+
+            Map<String, Object> body = Map.of(
+                    "sender", Map.of("name", senderName, "email", senderEmail),
+                    "to", List.of(Map.of("email", toEmail, "name", toName)),
+                    "subject", "Your password reset code",
+                    "htmlContent", buildPasswordResetContent(toName, resetToken)
+            );
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
+
+            restTemplate.postForEntity(BREVO_API_URL, request, String.class);
+
+        } catch (Exception e) {
+            System.err.println("Failed to send password reset email: " + e.getMessage());
         }
     }
 
@@ -64,4 +83,12 @@ public class EmailService {
                 + "<h2>" + employeeCode + "</h2>"
                 + "<p>Use it together with your password to sign in.</p>";
     }
+
+    private String buildPasswordResetContent(String name, String resetToken) {
+        return "<p>Hi " + name + ",</p>"
+                + "<p>You requested to reset your password. Use the code below:</p>"
+                + "<h2>" + resetToken + "</h2>"
+                + "<p>This code expires in 30 minutes. If you didn't request this, you can safely ignore this email.</p>";
+    }
+
 }
