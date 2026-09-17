@@ -5,7 +5,13 @@ import { BehaviorSubject, catchError, filter, switchMap, take, throwError } from
 
 import { AuthService } from '../service/auth.service';
 
-const AUTH_ENDPOINTS = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'];
+const AUTH_ENDPOINTS = [
+  '/api/auth/login',
+  '/api/auth/register',
+  '/api/auth/refresh',
+  '/api/auth/forgot-password',
+  '/api/auth/reset-password'
+];
 
 let isRefreshing = false;
 const refreshedToken$ = new BehaviorSubject<string | null>(null);

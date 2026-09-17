@@ -2,7 +2,11 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, catchError, tap, throwError } from 'rxjs';
 
-import { AuthResponse, LoginRequest, RefreshRequest, RegisterRequest, RegisterResponse } from '../models/auth.model';
+import { 
+  AuthResponse, LoginRequest, 
+  RefreshRequest, RegisterRequest, RegisterResponse,
+  ForgotPasswordRequest, ResetPasswordRequest, MessageResponse
+} from '../models/auth.model';
 
 const ACCESS_TOKEN_KEY = 'access_token';
 const REFRESH_TOKEN_KEY = 'refresh_token';
@@ -124,6 +128,16 @@ export class AuthService {
 
   register(payload: RegisterRequest): Observable<RegisterResponse> {
     return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, payload);
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    const payload: ForgotPasswordRequest = { email };
+    return this.http.post<MessageResponse>(`${this.apiUrl}/forgot-password`, payload);
+  }
+
+  resetPassword(token: string, newPassword: string, confirmPassword: string): Observable<MessageResponse> {
+    const payload: ResetPasswordRequest = { token, newPassword, confirmPassword };
+    return this.http.post<MessageResponse>(`${this.apiUrl}/reset-password`, payload);
   }
 
 }

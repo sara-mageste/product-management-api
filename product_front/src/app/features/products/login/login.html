@@ -59,8 +59,8 @@
     }
 
     <div class="login-links">
-      <a href="javascript:void(0)">Forgot your password?</a>
-      <a href="javascript:void(0)" (click)="openRegisterModal()">Create account</a>
+    <a href="javascript:void(0)" (click)="openForgotPasswordModal()">Forgot your password?</a>
+    <a href="javascript:void(0)" (click)="openRegisterModal()">Create account</a>
     </div>
 
   </form>
@@ -91,4 +91,10 @@
     [employeeCode]="welcomeCode()"
     (confirmed)="onWelcomeConfirmed()"
   ></app-welcome-modal>
+}
+
+@if (showForgotPasswordModal()) {
+  <app-forgot-password-modal
+    (closed)="closeForgotPasswordModal()"
+  ></app-forgot-password-modal>
 }

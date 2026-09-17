@@ -8,6 +8,7 @@ import { AuthService } from '../service/auth.service';
 import { RegisterModalComponent } from './register-modal/register-modal';
 import { WelcomeModalComponent } from './welcome-modal/welcome-modal';
 import { RegisterResponse } from '../models/auth.model';
+import { ForgotPasswordModalComponent } from './forgot-password-modal/forgot-password-modal';
 
 type Fruit = 'banana' | 'orange' | 'apple';
 
@@ -17,7 +18,7 @@ const ANIMATION_DURATION_MS = 650;
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RegisterModalComponent, WelcomeModalComponent],
+  imports: [CommonModule, FormsModule, RegisterModalComponent, WelcomeModalComponent, ForgotPasswordModalComponent],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
@@ -40,6 +41,8 @@ export class LoginComponent implements OnDestroy {
   showRegisterModal = signal(false);
   showWelcomeModal = signal(false);
   welcomeCode = signal('');
+
+  showForgotPasswordModal = signal(false);
 
   private lockIntervalId?: ReturnType<typeof setInterval>;
   private animationTimeoutId?: ReturnType<typeof setTimeout>;
@@ -202,6 +205,14 @@ export class LoginComponent implements OnDestroy {
   onWelcomeConfirmed(): void {
     this.showWelcomeModal.set(false);
     this.employeeCode.set(this.welcomeCode());
+  }
+  
+  openForgotPasswordModal(): void {
+    this.showForgotPasswordModal.set(true);
+  }
+
+  closeForgotPasswordModal(): void {
+    this.showForgotPasswordModal.set(false);
   }
   
 }
