@@ -16,15 +16,19 @@ The project focuses on:
 
 The application provides a complete frontend interface for product management operations, including:
 
+* JWT-based authentication, with automatic token attachment and silent refresh on expiration
+* Self-service account creation, with a preset avatar picker
+* Login with attempt lockout and animated visual feedback
+* Password recovery via a one-time code sent by email
 * Product management operations
 * Dynamic pagination and sorting
 * Product search by name
 * Bulk product deletion
 * Notifications management
 * Low stock notifications
-* Promotions management
+* Promotions management, with filters, bulk delete and a visual discount tag on product cards
 * Product image support via URL
-* Side navigation menu
+* Side navigation menu, showing the real logged-in user's data
 * About/Profile section
 * Reusable modal components
 
@@ -35,6 +39,9 @@ Additionally, the project communicates with a Java Spring Boot REST API, maintai
 
 ## 🚀 Features
 
+* Login, self-service registration and password recovery
+* Automatic session renewal via refresh tokens
+* Route guards protecting authenticated pages
 * Product listing
 * Product creation
 * Product editing
@@ -45,7 +52,7 @@ Additionally, the project communicates with a Java Spring Boot REST API, maintai
 * Side navigation menu
 * Notifications management
 * Low stock notification support
-* Promotions management
+* Promotions management with filters and bulk delete
 * About/Profile section
 * Reusable modal components
 * Loading state handling
@@ -66,6 +73,9 @@ src/app
 ├── about-me              → Profile/About section 
 ├── confirmation-modal    → Confirm/cancel action modal 
 ├── enums                 → Application enums 
+├── guards → Route guards (auth)
+├── interceptors → HTTP interceptors (auth token, refresh)
+├── login → Login, registration and password recovery
 ├── models                → Interfaces and data models 
 ├── notifications         → Notifications feature 
 ├── product-card          → Product card component 
@@ -90,20 +100,16 @@ This architecture provides:
 This frontend consumes the Product Management API, developed in Java with Spring Boot.
 
 Endpoints currently used include:
-* Product listing
-* Product creation
-* Product editing
-* Product deletion
-* Bulk product deletion
-* Product search
-* Pagination and sorting
+* Authentication (login, registration, refresh, logout, password recovery)
+* Product listing, creation, editing, deletion and bulk deletion
+* Product search, pagination and sorting
 * Notifications management
-* Promotions management
+* Promotions management, including filtering and bulk deletion
 
 Backend base URL:
 
 ```
-http://localhost:8080/api/products
+http://localhost:8080
 ```
 
 ## 🛠️ Technologies Used
@@ -150,11 +156,11 @@ http://localhost:4200
 
 ## 📈 Next Steps (Future Improvements)
 
-🔐 Implement authentication and authorization on the frontend
+🤖 Add CAPTCHA to account registration
 
-🧪 Expand unit test coverage
+🧪 Add automated frontend test coverage
 
-📦 Implement interceptors for global error handling and authentication tokens
+☁️ Deploy (free tier)
 
 ## 👩‍💻 Author
 
