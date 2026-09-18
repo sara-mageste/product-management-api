@@ -6,12 +6,12 @@
     <div class="profile-section">
 
       <div class="profile-info">
-        <h2>{{ userProfile.name }}</h2>
-        <span>{{ userProfile.employeeCode }}</span>
+        <h2>{{ profileName() }}</h2>
+        <span>{{ profileEmployeeCode() }}</span>
       </div>
 
       <img
-        [src]="userProfile.imageUrl"
+        [src]="profileAvatarImage()"
         class="profile-image"
       />
 

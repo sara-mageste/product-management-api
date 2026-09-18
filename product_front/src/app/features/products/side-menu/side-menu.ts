@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, HostListener, OnInit, OnDestroy, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, HostListener, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
@@ -26,12 +26,6 @@ export class SideMenuComponent implements OnInit, OnDestroy {
 
   @Input() isOpen = false;
 
-  @Input() userProfile!: {
-    name: string;
-    employeeCode: string;
-    imageUrl: string;
-  };
-
   @Output() closeMenu = new EventEmitter<void>();
   @Output() openProductFromNotification = new EventEmitter<number>();
   @Output() unreadStateChange = new EventEmitter<boolean>();
@@ -50,6 +44,13 @@ export class SideMenuComponent implements OnInit, OnDestroy {
   isNotificationDetailsModalOpen = false;
 
   private notificationsSubscription?: Subscription;
+
+  profileName = computed(() => this.authService.currentUser()?.name ?? '');
+  profileEmployeeCode = computed(() => this.authService.currentUser()?.employeeCode ?? '');
+  profileAvatarImage = computed(() => {
+    const avatarId = this.authService.currentUser()?.avatarId;
+    return avatarId ? `images/avatars/avatar${avatarId}.png` : 'images/placeholder.png';
+  });
 
   constructor(
     private notificationService: NotificationService, 
@@ -97,12 +98,6 @@ export class SideMenuComponent implements OnInit, OnDestroy {
     this.isAboutOpen = !this.isAboutOpen;
     if (this.isAboutOpen) this.isNotificationsOpen = false;
   }
-
-  aboutMe = {
-    name: 'Sara Mageste',
-    employeeCode: 'EMP-2026',
-    imageUrl: '/images/profile.png'
-  };
 
   toggleNotifications() {
     this.isNotificationsOpen = !this.isNotificationsOpen;

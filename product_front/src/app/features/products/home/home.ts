@@ -95,12 +95,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   // Side Menu
   isMenuOpen = false;
 
-  userProfile = {
-    name: 'Sara Mageste',
-    employeeCode: 'EMP-2026',
-    imageUrl: '/images/profile.png'
-  };
-
   // Notifications
   hasUnreadNotifications = false;
   private notificationsSubscription?: Subscription;
