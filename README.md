@@ -2,7 +2,8 @@
 
 A **Full Stack** product management system composed of a **Java Spring Boot backend** and an **Angular frontend**, developed with a focus on clean architecture, scalability, maintainability, and real-world corporate application practices.
 
-This project simulates a product management system similar to those used in **e-commerce platforms, product catalogs, and inventory management systems**, serving both as an in-depth learning **project and a professional portfolio project.**
+This project simulates a product management system similar to those used in **inventory management systems**, serving both as an in-depth learning **project and a professional portfolio project.**
+
 
 ## 🧩 Project Overview
 
@@ -37,12 +38,14 @@ The backend was developed using **Java 21 with Spring Boot**, following a layere
 * Dynamic pagination and sorting
 * Product search and filtering
 * Bulk product deletion
+* JWT-based authentication with self-service registration
+* Login attempt lockout and password recovery
 * Notifications management
 * Low stock notifications
-* Promotions management
+* Promotions management, including start/end notifications
 * Data validation
 * Global exception handling
-* Security structure prepared for JWT authentication
+* Automated unit and integration tests
 
 📄 **Full documentation:**
 
@@ -55,13 +58,16 @@ The frontend was developed using **Angular**, focusing on modular architecture, 
 
 ### Main features
 
-* REST API integration
+* REST API integration with automatic token attachment and refresh
+* Login screen with attempt lockout and animated feedback
+* Self-service account creation with avatar selection
+* Password recovery flow
 * Product listing and management
 * Product creation and editing
 * Bulk product deletion
-* Side navigation menu
-* Notifications popup and Hitory
-* Promotions management
+* Side navigation menu with real logged-in user data
+* Notifications popup and history
+* Promotions management with filters and bulk delete
 * About/Profile section
 * Dynamic pagination and sorting
 * Search integration with the backend
@@ -102,6 +108,7 @@ This flow ensures:
 * Lombok
 * MySQL
 * Maven
+* JUnit 5, Mockito, H2 (tests)
 
 ### Frontend
 
@@ -154,12 +161,11 @@ http://localhost:4200
 
 ## 📈 Next steps
 
-🔐 Implement authentication and authorization (JWT)
-
-🧪Add unit and integration tests
-
 📄 Document the API with Swagger/OpenAPI
 
+🤖 Add CAPTCHA to account registration
+
+☁️ Deploy (free tier)
 
 ## 👩‍💻 Author
 

@@ -7,32 +7,39 @@ The project simulates a real backend used in corporate applications such as e-co
 
 The application provides REST endpoints for complete product CRUD operations, including:
 
+* JWT-based authentication with self-service registration
+* Login attempt lockout and password recovery via email (Brevo API)
 * Product management operations
 * Pagination and sorting
 * Search by name and code
 * Product image support via URL
-* Notifications management
+* Notifications management, including promotion start/end alerts
 * Low stock notifications
-* Promotions management
-* Bulk product deletion
+* Promotions management with overlap validation and filtering
+* Bulk product and promotion deletion
 * Dynamic filtering with specifications
+* Automated unit and integration tests
 
 The API was designed with a decoupled architecture, allowing easy integration with frontend applications.
 Additionally, the project already includes an initial structure prepared for authentication and security, enabling future evolution without structural refactoring.
 
 ## 🚀 Features
 
+* JWT authentication (access + refresh tokens, with rotation)
+* Self-service account registration, with a unique randomly generated employee code
+* Login attempt tracking by identifier, independent of whether it exists (prevents account enumeration), with temporary lockout after repeated failures
+* Password recovery via a single-use, time-limited code sent by email
 * Full product CRUD operations
 * Product search by name and code
 * Dynamic pagination and sorting
 * Dynamic filtering with JPA Specifications
-* Bulk product deletion
+* Bulk product and promotion deletion
 * Notifications management
 * Low stock notification support
 * Unread notifications counting
-* Promotions management
+* Promotions management, including overlap prevention and automatic status calculation (scheduled, active, finished)
 * Data validation using Bean Validation
-* Global exception handling
+* Global exception handling with appropriate HTTP status codes
 * Standardized error responses
 * Clear separation of responsibilities by layer
 
@@ -50,6 +57,8 @@ src/main/java/com/saraprojects/product_api
 ├── exception     → Global exception handling
 ├── model         → JPA entities
 ├── repository    → Repositories (Spring Data JPA)
+├── scheduler → Scheduled jobs (promotion status sync, notifications)
+├── security → JWT service and authentication filter
 ├── service       → Business logic
 ├── specification → Dynamic query specifications
 └── ProductApiApplication.java
@@ -68,14 +77,25 @@ This organization ensures:
 * Spring Web
 * Spring Data JPA
 * Spring Validation
-* Spring Security (initial configuration)
+* Spring Security + JWT (jjwt)
 * Hibernate
 * Lombok
 * MySQL
 * Maven
+* JUnit 5, Mockito, H2 (in-memory database for tests)
+* Brevo API (transactional email)
 
 ## 📌 Endpoints
 
+### Authentication
+```
+POST /api/auth/register               → Create account (name, email, password, avatar)
+POST /api/auth/login                  → Sign in with employee code + password
+POST /api/auth/refresh                → Rotate access/refresh token pair
+POST /api/auth/logout                 → Revoke the current refresh token
+POST /api/auth/forgot-password        → Request a password reset code by email
+POST /api/auth/reset-password         → Reset password using a valid reset code
+```
 ### Products
 ```
 POST /api/products                    → Create product
@@ -104,22 +124,26 @@ GET /notifications/unread/count       → Count unread notifications
 GET /notifications/history            → Get notification history
 DELETE /notifications/history         → Clear notification history
 ```
-## 🔁 Promotion Business Rules
+## 🔁 Business Rules
 
 * A promotion can target either a specific product or a whole category (mutually exclusive)
 * Overlapping promotions for the same product or category are not allowed
-* Promotion status (SCHEDULED, ACTIVE, FINISHED) is calculated based on the current date and
-  kept in sync via a scheduled background job
+* Promotion status (SCHEDULED, ACTIVE, FINISHED) is calculated based on the current date and kept in sync via a scheduled background job
 * Active promotions cannot be deleted, individually or in bulk
+* A single notification is sent when a promotion both starts and ends "tomorrow" (single-day promotion), instead of two separate ones
+* Login attempts are tracked by the entered employee code itself, regardless of whether it exists, preventing unlimited brute-force enumeration of codes
+* The login/register/reset-password responses never reveal whether a given code or email exists in the system
+* After a password reset, all active sessions for that account are revoked
 
 ## ✅ Data Validation
 
 The API uses Bean Validation to ensure the integrity of incoming data:
 
-* Name is required
+* Name, email and password are required on registration; passwords must be at least 8 characters
 * Price is required and must be greater than zero
 * Quantity is required and must be greater than or equal to zero
 * URL format validation for product images
+* Discount percentage must be between 0 and 100
 
 Invalid requests return clear and structured error messages, making it easier for frontend applications to consume the API.
 
@@ -133,14 +157,26 @@ The project uses a global exception handling mechanism (GlobalExceptionHandler),
 
 ## 🔐 Security
 
-The application uses Spring Security with an initial configuration.
+The application uses Spring Security with a stateless JWT-based authentication filter chain.
 
 Current state:
-* All endpoints are allowed (permitAll)
+* `/api/auth/**` endpoints are public; all other endpoints require a valid access token
+* Passwords are hashed with BCrypt
+* Access tokens are short-lived; refresh tokens are rotated on each use and can be revoked
 * CSRF disabled (stateless API)
-* Structure prepared for future authentication
+* CORS restricted to the configured frontend origin
 
-The architecture allows easy evolution to JWT-based authentication without structural refactoring.
+## 🧪 Testing
+
+The project includes an automated test suite covering authentication, promotions and product pricing logic:
+
+* Unit tests (JUnit 5 + Mockito) for services, covering business rules such as login lockout, password reset, promotion overlap validation, and discount calculation precision
+* Integration tests (MockMvc + H2 in-memory database) covering controller HTTP responses and protected-endpoint authorization
+
+Run the tests with:
+```
+mvn test
+```
 
 ## 🔒 Sensitive Configuration
 
@@ -153,6 +189,9 @@ DB_PASSWORD
 JWT_SECRET
 JWT_EXPIRATION
 JWT_REFRESH_EXPIRATION
+BREVO_API_KEY
+BREVO_SENDER_EMAIL
+BREVO_SENDER_NAME
 ```
 
 Sensitive files are ignored using .gitignore.
@@ -181,11 +220,11 @@ http://localhost:8080
 
 ## 📈 Next Steps (Future Improvements)
 
-🔐 Implement authentication and authorization using Spring Security + JWT
-
-🧪 Add unit and integration tests
+🤖 Add CAPTCHA to account registration
 
 📄 Document the API using Swagger/OpenAPI
+
+☁️ Deploy (free tier)
 
 # 👩‍💻 Author
 
